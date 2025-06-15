@@ -33,6 +33,31 @@ export const fetchAdminInfo = createAsyncThunk(
   }
 );
 
+export const addMediaLinks = createAsyncThunk(
+  "/footer/addLinks",
+  async (formData) => {
+    const result = await axios.post(
+      `${baseUrl}/api/admin/footer/addLinks`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return result?.data;
+  }
+);
+
+export const fetchMediaLinks = createAsyncThunk(
+  "/footer/mediaLinks",
+  async () => {
+    const result = await axios.get(`${baseUrl}/api/admin/footer/mediaLinks`);
+
+    return result?.data;
+  }
+);
+
 export const fetchAllMessages = createAsyncThunk(
   "/footer/fetchAllMessages",
   async () => {
@@ -72,6 +97,9 @@ const AdminFooterSlice = createSlice({
       })
       .addCase(fetchAdminInfo.fulfilled, (state, action) => {
         state.adminInfo = action.payload?.data || {};
+      })
+      .addCase(fetchMediaLinks.fulfilled, (state, action) => {
+        state.mediaLinks = action.payload?.data || {};
       });
   },
 });
