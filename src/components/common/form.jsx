@@ -9,6 +9,8 @@ import {
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { X } from "lucide-react";
 
 function CommonForm({
   formControls,
@@ -18,9 +20,29 @@ function CommonForm({
   buttonText,
   isBtnDisabled,
 }) {
+  const handleMultiSelectChange = (name, value) => {
+    const currentValues = Array.isArray(formData[name]) ? formData[name] : [];
+    const newValues = currentValues.includes(value)
+      ? currentValues.filter((v) => v !== value)
+      : [...currentValues, value];
+
+    setFormData({
+      ...formData,
+      [name]: newValues,
+    });
+  };
+
+  const removeSelectedItem = (name, valueToRemove) => {
+    setFormData({
+      ...formData,
+      [name]: formData[name].filter((v) => v !== valueToRemove),
+    });
+  };
+
   function renderInputsByComponentType(getControlItem) {
     let element = null;
-    const value = formData[getControlItem.name] || "";
+    const value =
+      formData[getControlItem.name] || (getControlItem.multiple ? [] : "");
 
     switch (getControlItem.componentType) {
       case "input":
@@ -42,30 +64,77 @@ function CommonForm({
 
         break;
       case "select":
-        element = (
-          <Select
-            onValueChange={(value) =>
-              setFormData({
-                ...formData,
-                [getControlItem.name]: value,
-              })
-            }
-            value={value}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder={getControlItem.label} />
-            </SelectTrigger>
-            <SelectContent>
-              {getControlItem.options && getControlItem.options.length > 0
-                ? getControlItem.options.map((optionItem) => (
+        if (getControlItem.multiple) {
+          element = (
+            <div className="">
+              <Select
+                onValueChange={(selectedValue) => {
+                  handleMultiSelectChange(getControlItem.name, selectedValue);
+                }}
+                value="">
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder={`Select ${getControlItem.label}`} />
+                </SelectTrigger>
+                <SelectContent>
+                  {getControlItem.options?.map((optionItem) => (
                     <SelectItem key={optionItem.id} value={optionItem.id}>
                       {optionItem.label}
                     </SelectItem>
-                  ))
-                : null}
-            </SelectContent>
-          </Select>
-        );
+                  ))}
+                </SelectContent>
+              </Select>
 
+              <div className="flex flex-wrap gap-2">
+                {Array.isArray(value) &&
+                  value.map((selectedValue) => {
+                    const selectedOption = getControlItem.options?.find(
+                      (opt) => opt.id === selectedValue
+                    );
+                    return (
+                      <Badge
+                        key={selectedValue}
+                        className="flex items-center gap-1">
+                        {selectedOption?.label}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            removeSelectedItem(
+                              getControlItem.name,
+                              selectedValue
+                            )
+                          }
+                          className="ml-1 rounded-full">
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    );
+                  })}
+              </div>
+            </div>
+          );
+        } else {
+          element = (
+            <Select
+              onValueChange={(selectedValue) => {
+                setFormData({
+                  ...formData,
+                  [getControlItem.name]: selectedValue,
+                });
+              }}
+              value={value}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={getControlItem.label} />
+              </SelectTrigger>
+              <SelectContent>
+                {getControlItem.options?.map((optionItem) => (
+                  <SelectItem key={optionItem.id} value={optionItem.id}>
+                    {optionItem.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          );
+        }
         break;
       case "textarea":
         element = (

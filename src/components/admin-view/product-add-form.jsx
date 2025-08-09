@@ -50,6 +50,7 @@ export const useDynamicProductFormElements = () => {
       label: "Category",
       name: "category",
       componentType: "select",
+      multiple: true,
       options: categoryOptions.length
         ? categoryOptions
         : [{ label: "No categories listed yet!" }],
