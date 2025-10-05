@@ -5,12 +5,15 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { Toaster } from "sonner";
 import store from "./store/store.js";
+import { HeroUIProvider } from "@heroui/react";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <Provider store={store}>
-      <App />
-      <Toaster />
-    </Provider>
+    <HeroUIProvider>
+      <Provider store={store}>
+        <App />
+        <Toaster />
+      </Provider>
+    </HeroUIProvider>
   </BrowserRouter>
 );

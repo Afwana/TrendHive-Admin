@@ -6,6 +6,7 @@ import { Button } from "../ui/button";
 import axios from "axios";
 import { Skeleton } from "../ui/skeleton";
 import { toast } from "sonner";
+import { Card, CardBody } from "@heroui/react";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 const ALLOWED_FILE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
@@ -95,8 +96,7 @@ function ImageUpload({
   }, [imageFile]);
 
   return (
-    <div
-      className={`w-full  mt-4 ${isCustomStyling ? "" : "max-w-md mx-auto"}`}>
+    <div className={`w-full ${isCustomStyling ? "" : "max-w-md mx-auto"}`}>
       <Label className="text-lg font-semibold mb-2 block">
         {label ? label : "Upload image"}
       </Label>
@@ -105,7 +105,7 @@ function ImageUpload({
         onDrop={handleDrop}
         className={`${
           isEditMode ? "opacity-60" : ""
-        } border-2 border-dashed rounded-lg p-4`}>
+        } border-2 border-dashed rounded-lg`}>
         <Input
           id="image-upload"
           type="file"
