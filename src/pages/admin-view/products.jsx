@@ -2,8 +2,8 @@ import AddMoreImages from "@/components/admin-view/AddMoreImages";
 import ImageUpload from "@/components/admin-view/image-upload";
 import { useDynamicProductFormElements } from "@/components/admin-view/product-add-form";
 import AdminProductTile from "@/components/admin-view/product-tile";
+import AddNewProduct from "@/components/admin-view/Products/AddNewProduct";
 import CommonForm from "@/components/common/form";
-import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import {
   Sheet,
@@ -18,6 +18,7 @@ import {
   editProduct,
   fetchAllProducts,
 } from "@/store/admin/products-slice";
+import { Button, useDisclosure } from "@heroui/react";
 import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
@@ -39,72 +40,73 @@ const initialFormData = {
 };
 
 function AdminProducts() {
-  const [openCreateProductsDialog, setOpenCreateProductsDialog] =
-    useState(false);
+  // const [openCreateProductsDialog, setOpenCreateProductsDialog] =
+  //   useState(false);
   const [formData, setFormData] = useState(initialFormData);
-  const [imageFile, setImageFile] = useState(null);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
-  const [imageLoadingState, setImageLoadingState] = useState(false);
+  // const [imageFile, setImageFile] = useState(null);
+  // const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  // const [imageLoadingState, setImageLoadingState] = useState(false);
   const [currentEditedId, setCurrentEditedId] = useState(null);
-  const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
-  const [additionalProductImages, setAdditionalProductImages] = useState([]);
+  // const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  // const [additionalProductImages, setAdditionalProductImages] = useState([]);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const addProductFormElements = useDynamicProductFormElements();
+  // const addProductFormElements = useDynamicProductFormElements();
 
   const { productList } = useSelector((state) => state.adminProducts);
   const dispatch = useDispatch();
-  const lowercaseFormData = {
-    ...formData,
-    size: formData?.size?.toLowerCase(),
-    colours: formData?.colours?.toLowerCase(),
-  };
+  // const lowercaseFormData = {
+  //   ...formData,
+  //   size: formData?.size?.toLowerCase(),
+  //   colours: formData?.colours?.toLowerCase(),
+  // };
 
-  function onSubmit(event) {
-    event.preventDefault();
+  // function onSubmit(event) {
+  //   event.preventDefault();
 
-    currentEditedId !== null
-      ? dispatch(
-          editProduct({
-            id: currentEditedId,
-            formData: lowercaseFormData,
-          })
-        ).then((data) => {
-          if (data?.payload?.success) {
-            dispatch(fetchAllProducts());
-            setFormData(initialFormData);
-            setOpenCreateProductsDialog(false);
-            setCurrentEditedId(null);
-          }
-        })
-      : dispatch(
-          addNewProduct({
-            ...lowercaseFormData,
-            thumbnail: uploadedImageUrl,
-            images: additionalProductImages,
-          })
-        ).then((data) => {
-          if (data?.payload?.success) {
-            dispatch(fetchAllProducts());
-            setOpenCreateProductsDialog(false);
-            setImageFile(null);
-            setFormData(initialFormData);
-            toast.success("Product added successfully");
-            setAdditionalProductImages([]);
-          }
-        });
-  }
+  //   currentEditedId !== null
+  //     ? dispatch(
+  //         editProduct({
+  //           id: currentEditedId,
+  //           formData: lowercaseFormData,
+  //         })
+  //       ).then((data) => {
+  //         if (data?.payload?.success) {
+  //           dispatch(fetchAllProducts());
+  //           setFormData(initialFormData);
+  //           setOpenCreateProductsDialog(false);
+  //           setCurrentEditedId(null);
+  //         }
+  //       })
+  //     : dispatch(
+  //         addNewProduct({
+  //           ...lowercaseFormData,
+  //           thumbnail: uploadedImageUrl,
+  //           images: additionalProductImages,
+  //         })
+  //       ).then((data) => {
+  //         if (data?.payload?.success) {
+  //           dispatch(fetchAllProducts());
+  //           setOpenCreateProductsDialog(false);
+  //           setImageFile(null);
+  //           setFormData(initialFormData);
+  //           toast.success("Product added successfully");
+  //           setAdditionalProductImages([]);
+  //         }
+  //       });
+  // }
 
-  const handleAdditionalImagesUpdate = (imageUrls) => {
-    setAdditionalProductImages(imageUrls);
-    setFormData((prev) => ({
-      ...prev,
-      images: imageUrls,
-    }));
-  };
+  // const handleAdditionalImagesUpdate = (imageUrls) => {
+  //   setAdditionalProductImages(imageUrls);
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     images: imageUrls,
+  //   }));
+  // };
 
-  const handleDialogClose = () => {
-    setOpenDetailsDialog(false);
-  };
+  // const handleDialogClose = () => {
+  //   setOpenDetailsDialog(false);
+  // };
 
   function handleDelete(getCurrentProductId) {
     dispatch(deleteProduct(getCurrentProductId)).then((data) => {
@@ -114,22 +116,22 @@ function AdminProducts() {
     });
   }
 
-  function isFormValid() {
-    return Object.keys(formData)
-      .filter((currentKey) => currentKey !== "averageReview")
-      .map((key) => formData[key] !== "")
-      .every((item) => item);
-  }
+  // function isFormValid() {
+  //   return Object.keys(formData)
+  //     .filter((currentKey) => currentKey !== "averageReview")
+  //     .map((key) => formData[key] !== "")
+  //     .every((item) => item);
+  // }
 
   useEffect(() => {
     dispatch(fetchAllProducts());
   }, [dispatch]);
 
   return (
-    <Fragment>
+    <>
       <div className="mb-5 w-full flex justify-between">
         <h2 className="text-2xl font-bold">Products</h2>
-        <Button onClick={() => setOpenCreateProductsDialog(true)}>
+        <Button onPress={onOpen} color="primary">
           Add New Product
         </Button>
       </div>
@@ -139,7 +141,7 @@ function AdminProducts() {
               <AdminProductTile
                 key={index}
                 setFormData={setFormData}
-                setOpenCreateProductsDialog={setOpenCreateProductsDialog}
+                setOpenCreateProductsModal={onOpen}
                 setCurrentEditedId={setCurrentEditedId}
                 product={productItem}
                 handleDelete={handleDelete}
@@ -147,7 +149,12 @@ function AdminProducts() {
             ))
           : null}
       </div>
-      <Sheet
+      <AddNewProduct
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        currentEditedId={currentEditedId}
+      />
+      {/* <Sheet
         open={openCreateProductsDialog}
         onOpenChange={() => {
           setOpenCreateProductsDialog(false);
@@ -198,8 +205,8 @@ function AdminProducts() {
             </div>
           </div>
         </SheetContent>
-      </Sheet>
-    </Fragment>
+      </Sheet> */}
+    </>
   );
 }
 

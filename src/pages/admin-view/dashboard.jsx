@@ -1,6 +1,5 @@
 import KPIs from "@/components/admin-view/Dashboard/KPIs";
 import ImageUpload from "@/components/admin-view/image-upload";
-// import { Button } from "@/components/ui/button";
 import {
   addFeatureImage,
   deleteFeatureImage,
