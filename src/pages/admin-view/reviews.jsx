@@ -1,23 +1,20 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Input } from "@/components/ui/input";
 import {
   deleteReview,
   getAllReviewsForAdmin,
 } from "@/store/admin/review-slice";
-import { Card, CardContent, CardDescription } from "@/components/ui/card";
-import { CardHeader } from "@/components/ui/card";
-import { CardTitle } from "@/components/ui/card";
+import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import {
+  Input,
   Table,
   TableBody,
   TableCell,
-  TableHead,
+  TableColumn,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Trash2 } from "lucide-react";
-import { toast } from "sonner";
+} from "@heroui/react";
 
 function AdminReviews() {
   const [keyword, setKeyword] = useState("");
@@ -50,56 +47,55 @@ function AdminReviews() {
   };
 
   return (
-    <Card>
-      <CardHeader className="flex justify-between items-center">
-        <CardTitle className="text-2xl font-bold">Reviews</CardTitle>
-        <CardDescription>
-          <Input
-            value={keyword}
-            name="keyword"
-            onChange={(event) => setKeyword(event.target.value)}
-            className=""
-            placeholder="Search Reviews..."
-          />
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Review ID</TableHead>
-              <TableHead>User ID</TableHead>
-              <TableHead>User Name</TableHead>
-              <TableHead>Product ID</TableHead>
-              <TableHead>Review</TableHead>
-              <TableHead>Review Value</TableHead>
-              <TableHead> </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredReviews && filteredReviews.length > 0
-              ? filteredReviews.map((item) => (
-                  <TableRow key={item?._id}>
-                    <TableCell>{item?._id}</TableCell>
-                    <TableCell>{item?.userId}</TableCell>
-                    <TableCell>{item?.userName}</TableCell>
-                    <TableCell>{item?.productId}</TableCell>
-                    <TableCell>{item?.reviewMessage}</TableCell>
-                    <TableCell>{item?.reviewValue}</TableCell>
-                    <TableCell className="text-right">
-                      <Trash2
-                        size={22}
-                        color="red"
-                        onClick={() => handleDeleteReview(item?._id)}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))
-              : null}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+    <Table
+      topContent={
+        <div className="flex justify-between items-center w-full">
+          <h1 className="text-2xl font-bold">Reviews</h1>
+          <div>
+            <Input
+              value={keyword}
+              name="keyword"
+              onChange={(event) => setKeyword(event.target.value)}
+              className="w-full"
+              placeholder="Search Reviews..."
+            />
+          </div>
+        </div>
+      }
+      classNames={{
+        wrapper: "w-[390px] md:w-full",
+      }}>
+      <TableHeader>
+        <TableColumn>Review ID</TableColumn>
+        <TableColumn>User ID</TableColumn>
+        <TableColumn>User Name</TableColumn>
+        <TableColumn>Product ID</TableColumn>
+        <TableColumn>Review</TableColumn>
+        <TableColumn>Review Value</TableColumn>
+        <TableColumn> </TableColumn>
+      </TableHeader>
+      <TableBody>
+        {filteredReviews && filteredReviews.length > 0
+          ? filteredReviews.map((item) => (
+              <TableRow key={item?._id}>
+                <TableCell>{item?._id}</TableCell>
+                <TableCell>{item?.userId}</TableCell>
+                <TableCell>{item?.userName}</TableCell>
+                <TableCell>{item?.productId}</TableCell>
+                <TableCell>{item?.reviewMessage}</TableCell>
+                <TableCell>{item?.reviewValue}</TableCell>
+                <TableCell className="text-right">
+                  <Trash2
+                    size={22}
+                    color="red"
+                    onClick={() => handleDeleteReview(item?._id)}
+                  />
+                </TableCell>
+              </TableRow>
+            ))
+          : null}
+      </TableBody>
+    </Table>
   );
 }
 

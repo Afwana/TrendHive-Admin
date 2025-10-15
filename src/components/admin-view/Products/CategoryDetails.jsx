@@ -64,6 +64,7 @@ export default function CategoryDetails({ formData, setFormData }) {
   console.log(categoryList, brandList, productList);
 
   console.log(categoryOptions, brandOptions, productOptions);
+  console.log(formData);
 
   return (
     <div className="flex flex-col gap-3">
@@ -122,12 +123,9 @@ export default function CategoryDetails({ formData, setFormData }) {
             ? formData.subCategory
                 .map((key) => {
                   const category = categoryOptions.find(
-                    (cat) => cat.key === key
+                    (cat) => cat.id === key
                   );
-                  return category;
-                  // <Chip radius="sm" color="secondary">
-                  //   {category?.label}
-                  // </Chip>
+                  return category?.label;
                 })
                 .filter(Boolean)
                 .join(", ")
@@ -143,19 +141,31 @@ export default function CategoryDetails({ formData, setFormData }) {
           variant="bordered"
           selectionMode="multiple"
           isRequired
-          selectedKeys={formData.subCategory}
+          selectedKeys={formData.relatedProducts}
           onSelectionChange={(selected) =>
-            handleMultiSelectionChange("subCategory", selected)
+            handleMultiSelectionChange("relatedProducts", selected)
           }>
           {productOptions.map((product) => (
-            <SelectItem key={product.id}>{product.title}</SelectItem>
+            <SelectItem key={product.id}>{product.label}</SelectItem>
           ))}
         </Select>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {formData.relatedProducts.length > 0 ? (
             formData.relatedProducts.map((key) => (
-              <div key={key} className="p-2 border rounded text-center text-sm">
-                {productOptions.find((item) => item.key === key)?.title || key}
+              <div
+                key={key}
+                className="relative w-[150px] h-[150px] rounded-lg overflow-hidden border">
+                <img
+                  src={productOptions.find((item) => item.id === key)?.image}
+                  alt={
+                    productOptions.find((item) => item.id === key)?.label ||
+                    "Related Product"
+                  }
+                  className="w-full h-full object-cover"
+                />
+                <p className="border p-2 absolute z-40 text-xs fond-semibold bottom-0 left-0 right-0 opacity-70 bg-white text-center m-1">
+                  {productOptions.find((item) => item.id === key)?.label || key}
+                </p>
               </div>
             ))
           ) : (

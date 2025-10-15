@@ -1,7 +1,6 @@
 import AdminCategoryTile from "@/components/admin-view/category-tile";
 import ImageUpload from "@/components/admin-view/image-upload";
 import CommonForm from "@/components/common/form";
-import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -15,6 +14,8 @@ import {
   editCategory,
   fetchAllCategories,
 } from "@/store/admin/category-slice";
+import { Button, Card, CardBody, CardHeader } from "@heroui/react";
+import { Plus } from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
@@ -91,24 +92,54 @@ function AdminCategory() {
   }, [dispatch]);
 
   return (
-    <Fragment>
+    <div>
       <div className="mb-5 w-full flex justify-between">
         <h2 className="text-2xl font-bold">Categories</h2>
-        <Button onClick={() => setOpenCreateCategoriesDialog(true)}>
+        <Button
+          onPress={() => setOpenCreateCategoriesDialog(true)}
+          color="primary">
           Add New Category
         </Button>
       </div>
-      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+      <div className="flex flex-col gap-4 w-full">
         {categoryList && categoryList.length > 0
           ? categoryList.map((categoryItem, index) => (
-              <AdminCategoryTile
+              <Card
+                isBlurred
                 key={index}
-                setFormData={setFormData}
-                setOpenCreateProductsDialog={setOpenCreateCategoriesDialog}
-                setCurrentEditedId={setCurrentEditedId}
-                category={categoryItem}
-                handleDelete={handleDelete}
-              />
+                className="max-[325px]:w-[290px] min-[375px]:w-[340px] min-[425px]:w-[390px] md:w-full">
+                <CardHeader>
+                  <div className="flex items-center justify-between w-full">
+                    <h1 className="text-lg font-medium">
+                      {categoryItem?.title}
+                    </h1>
+                    <Button isIconOnly color="primary">
+                      <Plus size={18} color="white" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardBody>
+                  <div className="overflow-x-auto">
+                    <div className="flex gap-4 pb-2 min-w-max">
+                      {categoryList && categoryList.length > 0
+                        ? categoryList.map((categoryItem, index) => (
+                            <div key={index} className="flex-shrink-0 w-40">
+                              <AdminCategoryTile
+                                setFormData={setFormData}
+                                setOpenCreateProductsDialog={
+                                  setOpenCreateCategoriesDialog
+                                }
+                                setCurrentEditedId={setCurrentEditedId}
+                                category={categoryItem}
+                                handleDelete={handleDelete}
+                              />
+                            </div>
+                          ))
+                        : null}
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
             ))
           : null}
       </div>
@@ -148,7 +179,7 @@ function AdminCategory() {
           </div>
         </SheetContent>
       </Sheet>
-    </Fragment>
+    </div>
   );
 }
 

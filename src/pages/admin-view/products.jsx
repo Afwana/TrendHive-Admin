@@ -1,112 +1,23 @@
-import AddMoreImages from "@/components/admin-view/AddMoreImages";
-import ImageUpload from "@/components/admin-view/image-upload";
-import { useDynamicProductFormElements } from "@/components/admin-view/product-add-form";
 import AdminProductTile from "@/components/admin-view/product-tile";
 import AddNewProduct from "@/components/admin-view/Products/AddNewProduct";
-import CommonForm from "@/components/common/form";
-import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import {
-  addNewProduct,
-  deleteProduct,
-  editProduct,
-  fetchAllProducts,
-} from "@/store/admin/products-slice";
+import { deleteProduct, fetchAllProducts } from "@/store/admin/products-slice";
 import { Button, useDisclosure } from "@heroui/react";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "sonner";
-
-const initialFormData = {
-  thumbnail: null,
-  images: [],
-  title: "",
-  description: "",
-  category: "",
-  brand: "",
-  size: "",
-  colours: "",
-  quality: "",
-  price: "",
-  salePrice: "",
-  totalStock: "",
-  averageReview: 0,
-};
 
 function AdminProducts() {
-  // const [openCreateProductsDialog, setOpenCreateProductsDialog] =
-  //   useState(false);
-  const [formData, setFormData] = useState(initialFormData);
-  // const [imageFile, setImageFile] = useState(null);
-  // const [uploadedImageUrl, setUploadedImageUrl] = useState("");
-  // const [imageLoadingState, setImageLoadingState] = useState(false);
   const [currentEditedId, setCurrentEditedId] = useState(null);
-  // const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
-  // const [additionalProductImages, setAdditionalProductImages] = useState([]);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
-  // const addProductFormElements = useDynamicProductFormElements();
+  const [editProductData, setEditProductData] = useState(null);
 
   const { productList } = useSelector((state) => state.adminProducts);
   const dispatch = useDispatch();
-  // const lowercaseFormData = {
-  //   ...formData,
-  //   size: formData?.size?.toLowerCase(),
-  //   colours: formData?.colours?.toLowerCase(),
-  // };
 
-  // function onSubmit(event) {
-  //   event.preventDefault();
-
-  //   currentEditedId !== null
-  //     ? dispatch(
-  //         editProduct({
-  //           id: currentEditedId,
-  //           formData: lowercaseFormData,
-  //         })
-  //       ).then((data) => {
-  //         if (data?.payload?.success) {
-  //           dispatch(fetchAllProducts());
-  //           setFormData(initialFormData);
-  //           setOpenCreateProductsDialog(false);
-  //           setCurrentEditedId(null);
-  //         }
-  //       })
-  //     : dispatch(
-  //         addNewProduct({
-  //           ...lowercaseFormData,
-  //           thumbnail: uploadedImageUrl,
-  //           images: additionalProductImages,
-  //         })
-  //       ).then((data) => {
-  //         if (data?.payload?.success) {
-  //           dispatch(fetchAllProducts());
-  //           setOpenCreateProductsDialog(false);
-  //           setImageFile(null);
-  //           setFormData(initialFormData);
-  //           toast.success("Product added successfully");
-  //           setAdditionalProductImages([]);
-  //         }
-  //       });
-  // }
-
-  // const handleAdditionalImagesUpdate = (imageUrls) => {
-  //   setAdditionalProductImages(imageUrls);
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     images: imageUrls,
-  //   }));
-  // };
-
-  // const handleDialogClose = () => {
-  //   setOpenDetailsDialog(false);
-  // };
+  const handleEdit = (product) => {
+    setEditProductData(product);
+    onOpen();
+    setCurrentEditedId(product?._id);
+  };
 
   function handleDelete(getCurrentProductId) {
     dispatch(deleteProduct(getCurrentProductId)).then((data) => {
@@ -115,13 +26,6 @@ function AdminProducts() {
       }
     });
   }
-
-  // function isFormValid() {
-  //   return Object.keys(formData)
-  //     .filter((currentKey) => currentKey !== "averageReview")
-  //     .map((key) => formData[key] !== "")
-  //     .every((item) => item);
-  // }
 
   useEffect(() => {
     dispatch(fetchAllProducts());
@@ -140,10 +44,8 @@ function AdminProducts() {
           ? productList.map((productItem, index) => (
               <AdminProductTile
                 key={index}
-                setFormData={setFormData}
-                setOpenCreateProductsModal={onOpen}
-                setCurrentEditedId={setCurrentEditedId}
                 product={productItem}
+                handleEdit={handleEdit}
                 handleDelete={handleDelete}
               />
             ))
@@ -153,59 +55,9 @@ function AdminProducts() {
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         currentEditedId={currentEditedId}
+        editProductData={editProductData}
+        setCurrentEditedId={setCurrentEditedId}
       />
-      {/* <Sheet
-        open={openCreateProductsDialog}
-        onOpenChange={() => {
-          setOpenCreateProductsDialog(false);
-          setCurrentEditedId(null);
-          setFormData(initialFormData);
-        }}>
-        <SheetContent side="right" className="overflow-auto p-3">
-          <SheetHeader>
-            <SheetTitle>
-              {currentEditedId !== null ? "Edit Product" : "Add New Product"}
-            </SheetTitle>
-          </SheetHeader>
-          <div className="px-5">
-            <ImageUpload
-              imageFile={imageFile}
-              setImageFile={setImageFile}
-              uploadedImageUrl={uploadedImageUrl}
-              setUploadedImageUrl={setUploadedImageUrl}
-              setImageLoadingState={setImageLoadingState}
-              imageLoadingState={imageLoadingState}
-              isEditMode={currentEditedId !== null}
-            />
-            <Dialog
-              open={openDetailsDialog}
-              onOpenChange={setOpenDetailsDialog}>
-              <DialogTrigger asChild>
-                <div className="flex justify-end items-center mt-4">
-                  <Button>Add More Images</Button>
-                </div>
-              </DialogTrigger>
-              <DialogContent>
-                <AddMoreImages
-                  onImagesUpload={handleAdditionalImagesUpdate}
-                  onClose={handleDialogClose}
-                  currentImages={additionalProductImages}
-                />
-              </DialogContent>
-            </Dialog>
-            <div className="py-6">
-              <CommonForm
-                onSubmit={onSubmit}
-                formData={formData}
-                setFormData={setFormData}
-                buttonText={currentEditedId !== null ? "Edit" : "Add"}
-                formControls={addProductFormElements}
-                isBtnDisabled={!isFormValid()}
-              />
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet> */}
     </>
   );
 }

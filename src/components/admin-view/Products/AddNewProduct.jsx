@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Button,
@@ -13,12 +13,12 @@ import AnimatedStepper from "./AnimatedStepper";
 import BasicInfo from "./BasicInfo";
 import CategoryDetails from "./CategoryDetails";
 import ImagesUpload from "./ImagesUpload";
-import { useDispatch } from "react-redux";
-import {
-  addNewProduct,
-  editProduct,
-  fetchAllProducts,
-} from "@/store/admin/products-slice";
+// import { useDispatch } from "react-redux";
+// import {
+//   addNewProduct,
+//   editProduct,
+//   fetchAllProducts,
+// } from "@/store/admin/products-slice";
 import { toast } from "sonner";
 
 const initialFormData = {
@@ -44,6 +44,7 @@ export default function AddNewProduct({
   onOpenChange,
   currentEditedId,
   setCurrentEditedId,
+  editProductData,
 }) {
   const [formData, setFormData] = useState(initialFormData);
   const [currentStep, setCurrentStep] = useState(1);
@@ -51,7 +52,21 @@ export default function AddNewProduct({
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoadingState, setImageLoadingState] = useState(false);
   const [additionalProductImages, setAdditionalProductImages] = useState([]);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (editProductData) {
+      setFormData(editProductData);
+      setUploadedImageUrl(editProductData.thumbnail || "");
+      setAdditionalProductImages(editProductData.images || []);
+      setImageFile(editProductData.thumbnail || null);
+    } else {
+      setFormData(initialFormData);
+      setUploadedImageUrl("");
+      setAdditionalProductImages([]);
+      setImageFile(null);
+    }
+  }, [editProductData]);
 
   const lowercaseFormData = {
     ...formData,
@@ -60,7 +75,7 @@ export default function AddNewProduct({
   };
 
   function onSubmit(event) {
-    // event.preventDefault();
+    event.preventDefault();
 
     if (!isFormValid()) {
       toast.error("Please fill all required fields");
@@ -89,24 +104,15 @@ export default function AddNewProduct({
     //     ).then((data) => {
     //       if (data?.payload?.success) {
     //         dispatch(fetchAllProducts());
-    //         setFormData(initialFormData);
-    //         setUploadedImageUrl("");
-    //         setAdditionalProductImages([]);
-    //         setImageFile(null);
-    //         setCurrentEditedId(null);
-    //         onOpenChange(false);
+    //         handleClose();
     //         toast.success("Product updated successfully");
     //       }
     //     })
     //   : dispatch(addNewProduct(productData)).then((data) => {
     //       if (data?.payload?.success) {
     //         dispatch(fetchAllProducts());
-    //         setImageFile(null);
-    //         setFormData(initialFormData);
+    //         handleClose();
     //         toast.success("Product added successfully");
-    //         setAdditionalProductImages([]);
-    //         setUploadedImageUrl("");
-    //         onOpenChange(false);
     //       }
     //     });
   }

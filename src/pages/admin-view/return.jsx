@@ -1,17 +1,5 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription } from "@/components/ui/card";
-import { CardHeader } from "@/components/ui/card";
-import { CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -26,6 +14,15 @@ import { DialogContent } from "@/components/ui/dialog";
 import { DialogTitle } from "@/components/ui/dialog";
 import CommonForm from "./../../components/common/form";
 import { updateOrderStatus } from "./../../store/admin/order-slice/index";
+import {
+  Input,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@heroui/react";
 
 function AdminReturn() {
   const [keyword, setKeyword] = useState("");
@@ -91,124 +88,123 @@ function AdminReturn() {
   }
 
   return (
-    <Card>
-      <CardHeader className="flex justify-between items-center">
-        <CardTitle className="text-2xl font-bold">Return Requests</CardTitle>
-        <CardDescription>
-          <Input
-            value={keyword}
-            name="keyword"
-            onChange={(event) => setKeyword(event.target.value)}
-            className=""
-            placeholder="Search Return Requests..."
-          />
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Return ID</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Order ID</TableHead>
-              <TableHead>Reason for return</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead> </TableHead>
-              <TableHead> </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredReturns && filteredReturns.length > 0
-              ? filteredReturns.map((item) => (
-                  <TableRow key={item?._id}>
-                    <TableCell>{item?._id}</TableCell>
-                    <TableCell>{item?.createdAt.split("T")[0]}</TableCell>
-                    <TableCell>{item?.orderId}</TableCell>
-                    <TableCell>{item?.reason}</TableCell>
-                    <TableCell>
-                      <Badge
-                        className={`py-1 px-3 ${
-                          item?.status === "Pending"
-                            ? "bg-yellow-500"
-                            : item?.status === "Confirmed"
-                            ? "bg-orange-500"
-                            : item?.status === "In Process"
-                            ? "bg-cyan-500"
-                            : item?.status === "Shipped"
-                            ? "bg-blue-500"
-                            : item?.status === "Delivered"
-                            ? "bg-green-500"
-                            : item?.status === "Cancelled"
-                            ? "bg-red-500"
-                            : item?.status === "Rejected"
-                            ? "bg-red-600"
-                            : "bg-black"
-                        }`}>
-                        {item?.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{item?.reviewValue}</TableCell>
-                    <TableCell className="text-right">
-                      <Dialog
-                        open={openUpdateStatus}
-                        onOpenChange={() => {
-                          setOpenUpdateStatus(false);
-                        }}>
-                        <Button
-                          onClick={() => {
-                            setOpenUpdateStatus(true);
-                            setFormData({
-                              returnId: item?._id,
-                              orderId: item?.orderId,
-                              status: item?.status,
-                            });
-                          }}>
-                          Update Status
-                        </Button>
-                        <DialogContent className="sm:max-w-[600px]">
-                          <DialogTitle>Update Order Status</DialogTitle>
-                          <div className="py-5">
-                            <CommonForm
-                              formControls={[
-                                {
-                                  label: "Order Status",
-                                  name: "status",
-                                  componentType: "select",
-                                  options: [
-                                    { id: "Pending", label: "Pending" },
-                                    { id: "Confirmed", label: "Confirmed" },
-                                    { id: "In Process", label: "In Process" },
-                                    { id: "Shipped", label: "Shipped" },
-                                    { id: "Delivered", label: "Delivered" },
-                                    { id: "Cancelled", label: "Cancelled" },
-                                    { id: "Rejected", label: "Rejected" },
-                                    { id: "Returned", label: "Returned" },
-                                  ],
-                                },
-                              ]}
-                              formData={formData}
-                              setFormData={setFormData}
-                              buttonText={"Update Status"}
-                              onSubmit={handleUpdateStatus}
-                            />
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Trash2
-                        size={22}
-                        color="red"
-                        onClick={() => handleDeleteReturn(item?._id)}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))
-              : null}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+    <Table
+      topContent={
+        <div className="flex justify-between items-center w-full">
+          <h1 className="text-2xl font-bold">Return Requests</h1>
+          <div>
+            <Input
+              value={keyword}
+              name="keyword"
+              onChange={(event) => setKeyword(event.target.value)}
+              className="w-full"
+              placeholder="Search Return Requests..."
+            />
+          </div>
+        </div>
+      }
+      classNames={{
+        wrapper: "w-[390px] md:w-full",
+      }}>
+      <TableHeader>
+        <TableColumn>Return ID</TableColumn>
+        <TableColumn>Date</TableColumn>
+        <TableColumn>Order ID</TableColumn>
+        <TableColumn>Reason for return</TableColumn>
+        <TableColumn>Status</TableColumn>
+        <TableColumn> </TableColumn>
+        <TableColumn> </TableColumn>
+      </TableHeader>
+      <TableBody>
+        {filteredReturns && filteredReturns.length > 0
+          ? filteredReturns.map((item) => (
+              <TableRow key={item?._id}>
+                <TableCell>{item?._id}</TableCell>
+                <TableCell>{item?.createdAt.split("T")[0]}</TableCell>
+                <TableCell>{item?.orderId}</TableCell>
+                <TableCell>{item?.reason}</TableCell>
+                <TableCell>
+                  <Badge
+                    className={`py-1 px-3 ${
+                      item?.status === "Pending"
+                        ? "bg-yellow-500"
+                        : item?.status === "Confirmed"
+                        ? "bg-orange-500"
+                        : item?.status === "In Process"
+                        ? "bg-cyan-500"
+                        : item?.status === "Shipped"
+                        ? "bg-blue-500"
+                        : item?.status === "Delivered"
+                        ? "bg-green-500"
+                        : item?.status === "Cancelled"
+                        ? "bg-red-500"
+                        : item?.status === "Rejected"
+                        ? "bg-red-600"
+                        : "bg-black"
+                    }`}>
+                    {item?.status}
+                  </Badge>
+                </TableCell>
+                <TableCell>{item?.reviewValue}</TableCell>
+                <TableCell className="text-right">
+                  <Dialog
+                    open={openUpdateStatus}
+                    onOpenChange={() => {
+                      setOpenUpdateStatus(false);
+                    }}>
+                    <Button
+                      onClick={() => {
+                        setOpenUpdateStatus(true);
+                        setFormData({
+                          returnId: item?._id,
+                          orderId: item?.orderId,
+                          status: item?.status,
+                        });
+                      }}>
+                      Update Status
+                    </Button>
+                    <DialogContent className="sm:max-w-[600px]">
+                      <DialogTitle>Update Order Status</DialogTitle>
+                      <div className="py-5">
+                        <CommonForm
+                          formControls={[
+                            {
+                              label: "Order Status",
+                              name: "status",
+                              componentType: "select",
+                              options: [
+                                { id: "Pending", label: "Pending" },
+                                { id: "Confirmed", label: "Confirmed" },
+                                { id: "In Process", label: "In Process" },
+                                { id: "Shipped", label: "Shipped" },
+                                { id: "Delivered", label: "Delivered" },
+                                { id: "Cancelled", label: "Cancelled" },
+                                { id: "Rejected", label: "Rejected" },
+                                { id: "Returned", label: "Returned" },
+                              ],
+                            },
+                          ]}
+                          formData={formData}
+                          setFormData={setFormData}
+                          buttonText={"Update Status"}
+                          onSubmit={handleUpdateStatus}
+                        />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </TableCell>
+                <TableCell className="text-right">
+                  <Trash2
+                    size={22}
+                    color="red"
+                    onClick={() => handleDeleteReturn(item?._id)}
+                  />
+                </TableCell>
+              </TableRow>
+            ))
+          : null}
+      </TableBody>
+    </Table>
   );
 }
 
