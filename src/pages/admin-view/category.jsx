@@ -102,46 +102,46 @@ function AdminCategory() {
         </Button>
       </div>
       <div className="flex flex-col gap-4 w-full">
-        {categoryList && categoryList.length > 0
-          ? categoryList.map((categoryItem, index) => (
-              <Card
-                isBlurred
-                key={index}
-                className="max-[325px]:w-[290px] min-[375px]:w-[340px] min-[425px]:w-[390px] md:w-full">
-                <CardHeader>
-                  <div className="flex items-center justify-between w-full">
-                    <h1 className="text-lg font-medium">
-                      {categoryItem?.title}
-                    </h1>
-                    <Button isIconOnly color="primary">
-                      <Plus size={18} color="white" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardBody>
-                  <div className="overflow-x-auto">
-                    <div className="flex gap-4 pb-2 min-w-max">
-                      {categoryList && categoryList.length > 0
-                        ? categoryList.map((categoryItem, index) => (
-                            <div key={index} className="flex-shrink-0 w-40">
-                              <AdminCategoryTile
-                                setFormData={setFormData}
-                                setOpenCreateProductsDialog={
-                                  setOpenCreateCategoriesDialog
-                                }
-                                setCurrentEditedId={setCurrentEditedId}
-                                category={categoryItem}
-                                handleDelete={handleDelete}
-                              />
-                            </div>
-                          ))
-                        : null}
+        {categoryList && categoryList.length > 0 ? (
+          categoryList.map((categoryItem, index) => (
+            <Card isBlurred key={index}>
+              <CardHeader>
+                <div className="flex items-center justify-between w-full">
+                  <h1 className="text-lg font-medium">{categoryItem?.title}</h1>
+                  <Button isIconOnly color="primary">
+                    <Plus size={18} color="white" />
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardBody>
+                <div className="flex gap-4 pb-2 overflow-x-auto w-full scrollbar-hide">
+                  {categoryList && categoryList.length > 0 ? (
+                    categoryList.map((categoryItem, index) => (
+                      <AdminCategoryTile
+                        key={index}
+                        setFormData={setFormData}
+                        setOpenCreateProductsDialog={
+                          setOpenCreateCategoriesDialog
+                        }
+                        setCurrentEditedId={setCurrentEditedId}
+                        category={categoryItem}
+                        handleDelete={handleDelete}
+                      />
+                    ))
+                  ) : (
+                    <div className="flex items-center justify-center mt-5 text-red-400">
+                      No sub categories found.
                     </div>
-                  </div>
-                </CardBody>
-              </Card>
-            ))
-          : null}
+                  )}
+                </div>
+              </CardBody>
+            </Card>
+          ))
+        ) : (
+          <div className="flex items-center justify-center mt-5 text-red-400">
+            No categories found.
+          </div>
+        )}
       </div>
       <Sheet
         open={openCreateCategoriesDialog}
