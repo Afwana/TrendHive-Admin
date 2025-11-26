@@ -9,7 +9,7 @@ function AdminCategoryTile({
   handleDelete,
 }) {
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex flex-col items-center">
       <img
         src={category?.image}
         alt={category?.title}
