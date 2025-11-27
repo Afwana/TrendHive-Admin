@@ -11,6 +11,7 @@ const MAX_FILE_SIZE = 2 * 1024 * 1024;
 const ALLOWED_FILE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 
 function SubCategoryImage({
+  uploadId,
   imageFile,
   setImageFile,
   imageLoadingState,
@@ -94,7 +95,7 @@ function SubCategoryImage({
   }, [imageFile]);
 
   return (
-    <div className="flex flex-col gap-2 w-1/2">
+    <div className="flex flex-col gap-2 w-2/6">
       <div
         onDragOver={handleDragOver}
         onDrop={handleDrop}
@@ -102,7 +103,7 @@ function SubCategoryImage({
           isEditMode ? "opacity-60" : ""
         } border-2 border-dashed rounded-lg`}>
         <Input
-          id="image-upload"
+          id={`sub-category-image-upload-${uploadId}`}
           type="file"
           className="hidden"
           ref={inputRef}
@@ -111,7 +112,7 @@ function SubCategoryImage({
         />
         {!imageFile ? (
           <Label
-            htmlFor="image-upload"
+            htmlFor={`sub-category-image-upload-${uploadId}`}
             className={`${
               isEditMode ? "cursor-not-allowed" : ""
             } flex flex-col items-center justify-center cursor-pointer py-2.5`}>
@@ -121,28 +122,16 @@ function SubCategoryImage({
         ) : imageLoadingState ? (
           <Skeleton className="h-5 bg-gray-100" />
         ) : (
-          <div className="flex items-center justify-between">
-            {/* <div className="flex items-center">
-              <FileIcon className="w-5 text-primary mr-2 h-5" />
-            </div>
-            <p className="text-sm font-medium">{imageFile.name}</p>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-muted-foreground hover:text-foreground"
-              onClick={handleRemoveImage}>
-              <XIcon className="w-2 h-2" />
-              <span className="sr-only">Remove File</span>
-            </Button> */}
+          <div className="flex items-start justify-between py-2">
             <img
               src={URL.createObjectURL(imageFile)}
               alt="Uploaded"
-              className="h-20 w-20 object-cover rounded-md"
+              className="h-20 w-20 object-contain rounded-md"
             />
             <Button
               variant="ghost"
               size="icon"
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground cursor-pointer"
               onClick={handleRemoveImage}>
               <XIcon className="w-2 h-2" />
               <span className="sr-only">Remove File</span>

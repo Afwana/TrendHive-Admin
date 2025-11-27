@@ -3,10 +3,10 @@ import { EditIcon, Trash2 } from "lucide-react";
 
 function AdminCategoryTile({
   category,
-  setFormData,
-  setOpenCreateProductsDialog,
-  setCurrentEditedId,
-  handleDelete,
+  // setFormData,
+  // setOpenCreateProductsDialog,
+  // setCurrentEditedId,
+  // handleDelete,
 }) {
   return (
     <div className="flex flex-col items-center">
@@ -17,7 +17,7 @@ function AdminCategoryTile({
       />
       <div className="flex items-center justify-center gap-1 w-full">
         <h2 className="text-xl font-bold mb-2 mt-2">{category?.title}</h2>
-        <div className="flex justify-between items-center">
+        {/* <div className="flex justify-between items-center">
           <Button
             onPress={() => {
               setOpenCreateProductsDialog(true);
@@ -34,7 +34,7 @@ function AdminCategoryTile({
             variant="light">
             <Trash2 size={16} color="red" />
           </Button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

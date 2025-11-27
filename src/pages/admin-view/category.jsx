@@ -1,14 +1,12 @@
 import AdminCategoryTile from "@/components/admin-view/category-tile";
 import ImageUpload from "@/components/admin-view/image-upload";
 import SubCategoryImage from "@/components/admin-view/subCategoryImage";
-import CommonForm from "@/components/common/form";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { addCategoryFormElements } from "@/config";
 import {
   addNewCategory,
   deleteCategory,
@@ -16,8 +14,8 @@ import {
   fetchAllCategories,
 } from "@/store/admin/category-slice";
 import { Button, Card, CardBody, CardHeader, Input } from "@heroui/react";
-import { Plus, PlusSquare, Trash2 } from "lucide-react";
-import { Fragment, useEffect, useState } from "react";
+import { EditIcon, PlusSquare, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
@@ -35,9 +33,7 @@ function AdminCategory() {
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoadingState, setImageLoadingState] = useState(false);
   const [currentEditedId, setCurrentEditedId] = useState(null);
-  const [subCategoryFile, setSubCategoryFile] = useState(null);
-  const [uploadedsubCategoryUrl, setUploadedsubCategoryUrl] = useState("");
-  const [subCategoryLoadingState, setsubCategoryLoadingState] = useState(false);
+  const [subCategoryImages, setSubCategoryImages] = useState({});
 
   const { categoryList } = useSelector((state) => state.adminCategory);
   const dispatch = useDispatch();
@@ -74,19 +70,76 @@ function AdminCategory() {
     }));
   };
 
-  const updateSubCategoryImage = (index, imageUrl) => {
-    setFormData((prev) => ({
+  const updateSubCategoryImageFile = (index, file) => {
+    setSubCategoryImages((prev) => ({
       ...prev,
-      subCategories: prev.subCategories.map((subCat, i) =>
-        i === index ? { ...subCat, image: imageUrl } : subCat
-      ),
+      [index]: {
+        ...prev[index],
+        file,
+      },
     }));
+  };
+
+  const updateSubCategoryImageUrl = (index, url) => {
+    setSubCategoryImages((prev) => ({
+      ...prev,
+      [index]: {
+        ...prev[index],
+        url,
+      },
+    }));
+  };
+
+  const updateSubCategoryImageLoading = (index, loading) => {
+    setSubCategoryImages((prev) => ({
+      ...prev,
+      [index]: {
+        ...prev[index],
+        loading,
+      },
+    }));
+  };
+
+  const handleEditCategory = (category) => {
+    setCurrentEditedId(category._id);
+
+    setFormData({
+      image: category.image,
+      title: category.title,
+      subCategories:
+        category.subCategories.length > 0
+          ? category.subCategories.map((subCat, index) => ({
+              id: index + 1,
+              title: subCat.title,
+              image: subCat.image,
+            }))
+          : [{ id: 1, title: "", image: null }],
+    });
+    setUploadedImageUrl(category.image || "");
+    const subCategoryImagesData = {};
+    category.subCategories.forEach((subCat, index) => {
+      subCategoryImagesData[index] = {
+        file: null,
+        url: subCat.image || "",
+        loading: false,
+      };
+    });
+    setSubCategoryImages(subCategoryImagesData);
+
+    setOpenCreateCategoriesDialog(true);
   };
 
   function onSubmit(event) {
     event.preventDefault();
 
-    const filteredSubCategories = formData.subCategories.filter(
+    const subCategoriesWithImages = formData.subCategories.map(
+      (subCat, index) => ({
+        ...subCat,
+        image: subCategoryImages[index]?.url || subCat.image || null,
+      })
+    );
+
+    const filteredSubCategories = subCategoriesWithImages.filter(
       (subCat) => subCat.title.trim() !== "" || subCat.image !== null
     );
 
@@ -98,30 +151,34 @@ function AdminCategory() {
 
     console.log("Submitting data:", submitData);
 
-    // currentEditedId !== null
-    //   ? dispatch(
-    //       editCategory({
-    //         id: currentEditedId,
-    //         formData: submitData,
-    //       })
-    //     ).then((data) => {
-    //       if (data?.payload?.success) {
-    //         dispatch(fetchAllCategories());
-    //         setFormData(initialFormData);
-    //         setOpenCreateCategoriesDialog(false);
-    //         setCurrentEditedId(null);
-    //         toast.success("Category edited successfully");
-    //       }
-    //     })
-    //   : dispatch(addNewCategory(submitData)).then((data) => {
-    //       if (data?.payload?.success) {
-    //         dispatch(fetchAllCategories());
-    //         setImageFile(null);
-    //         setFormData(initialFormData);
-    //         setOpenCreateCategoriesDialog(false);
-    //         toast.success("Category added successfully");
-    //       }
-    //     });
+    currentEditedId !== null
+      ? dispatch(
+          editCategory({
+            id: currentEditedId,
+            formData: submitData,
+          })
+        ).then((data) => {
+          if (data?.payload?.success) {
+            dispatch(fetchAllCategories());
+            setFormData(initialFormData);
+            setOpenCreateCategoriesDialog(false);
+            setCurrentEditedId(null);
+            setImageFile(null);
+            setUploadedImageUrl("");
+            setSubCategoryImages({});
+            toast.success("Category edited successfully");
+          }
+        })
+      : dispatch(addNewCategory(submitData)).then((data) => {
+          if (data?.payload?.success) {
+            dispatch(fetchAllCategories());
+            setImageFile(null);
+            setFormData(initialFormData);
+            setOpenCreateCategoriesDialog(false);
+            setSubCategoryImages({});
+            toast.success("Category added successfully");
+          }
+        });
   }
 
   function handleDelete(getCurrentCategoryId) {
@@ -161,8 +218,11 @@ function AdminCategory() {
               <CardHeader>
                 <div className="flex items-center justify-between w-full">
                   <h1 className="text-lg font-medium">{categoryItem?.title}</h1>
-                  <Button isIconOnly color="primary">
-                    <Plus size={18} color="white" />
+                  <Button
+                    isIconOnly
+                    color="primary"
+                    onPress={() => handleEditCategory(categoryItem)}>
+                    <EditIcon size={18} color="white" />
                   </Button>
                 </div>
               </CardHeader>
@@ -198,10 +258,15 @@ function AdminCategory() {
       </div>
       <Sheet
         open={openCreateCategoriesDialog}
-        onOpenChange={() => {
+        onOpenChange={(open) => {
           setOpenCreateCategoriesDialog(false);
-          setCurrentEditedId(null);
-          setFormData(initialFormData);
+          if (!open) {
+            setCurrentEditedId(null);
+            setFormData(initialFormData);
+            setImageFile(null);
+            setUploadedImageUrl("");
+            setSubCategoryImages({});
+          }
         }}>
         <SheetContent side="right" className="overflow-auto">
           <SheetHeader>
@@ -233,31 +298,6 @@ function AdminCategory() {
                   labelPlacement="outside"
                   variant="bordered"
                 />
-                {/* <h1 className="flex items-center justify-start text-sm font-medium mt-4">
-                  Sub Categories
-                </h1>
-                <div className="flex mt-3 justify-between items-center w-full gap-5">
-                  <div className="flex gap-3 w-full">
-                    <SubCategoryImage
-                      imageFile={subCategoryFile}
-                      setImageFile={setSubCategoryFile}
-                      uploadedImageUrl={uploadedsubCategoryUrl}
-                      setUploadedImageUrl={setUploadedsubCategoryUrl}
-                      setImageLoadingState={setsubCategoryLoadingState}
-                      imageLoadingState={subCategoryLoadingState}
-                      isEditMode={currentEditedId !== null}
-                    />
-                    <Input
-                      labelPlacement="outside"
-                      variant="bordered"
-                      placeholder="Enter subcategory title"
-                      id={"subCategoryTitle"}
-                      label="Title"
-                      className="w-full"
-                    />
-                  </div>
-                  <PlusSquare />
-                </div> */}
                 <div className="mt-6">
                   <div className="flex items-center justify-between mb-4">
                     <h1 className="text-sm font-medium">Sub Categories</h1>
@@ -276,13 +316,25 @@ function AdminCategory() {
                       key={subCategory.id}
                       className="flex items-center gap-3 mb-4 p-3 border rounded-lg">
                       <SubCategoryImage
-                        imageFile={subCategoryFile}
-                        setImageFile={setSubCategoryFile}
-                        uploadedImageUrl={uploadedsubCategoryUrl}
-                        setUploadedImageUrl={setUploadedsubCategoryUrl}
-                        setImageLoadingState={setsubCategoryLoadingState}
-                        imageLoadingState={subCategoryLoadingState}
+                        uploadId={index}
+                        imageFile={subCategoryImages[index]?.file || null}
+                        setImageFile={(file) =>
+                          updateSubCategoryImageFile(index, file)
+                        }
+                        uploadedImageUrl={subCategoryImages[index]?.url || ""}
+                        setUploadedImageUrl={(url) =>
+                          updateSubCategoryImageUrl(index, url)
+                        }
+                        setImageLoadingState={(loading) =>
+                          updateSubCategoryImageLoading(index, loading)
+                        }
+                        imageLoadingState={
+                          subCategoryImages[index]?.loading || false
+                        }
                         isEditMode={currentEditedId !== null}
+                        // onImageUpload={(url) =>
+                        //   updateSubCategoryImage(index, url)
+                        // }
                       />
                       <Input
                         labelPlacement="outside"
