@@ -108,7 +108,7 @@ function SubCategoryImage({
           className="hidden"
           ref={inputRef}
           onChange={handleImageFileChange}
-          disabled={isEditMode}
+          // disabled={isEditMode}
         />
         {!imageFile ? (
           <Label

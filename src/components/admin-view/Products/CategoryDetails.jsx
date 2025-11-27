@@ -1,15 +1,22 @@
 import { Chip, Select, SelectItem } from "@heroui/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllCategories } from "@/store/admin/category-slice";
+import {
+  fetchAllCategories,
+  fetchSubCategoriesOfCategory,
+} from "@/store/admin/category-slice";
 import { fetchAllBrands } from "@/store/admin/brand-slice";
 import { fetchAllProducts } from "@/store/admin/products-slice";
 
 export default function CategoryDetails({ formData, setFormData }) {
   const dispatch = useDispatch();
-  const { categoryList } = useSelector((state) => state.adminCategory);
+  const { categoryList, subCategoryList } = useSelector(
+    (state) => state.adminCategory
+  );
   const { brandList } = useSelector((state) => state.adminBrand);
   const { productList } = useSelector((state) => state.adminProducts);
+
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
 
   const categoryOptions =
     categoryList && categoryList.length > 0
@@ -36,15 +43,31 @@ export default function CategoryDetails({ formData, setFormData }) {
         }))
       : [];
 
+  const subCategoryOptions =
+    subCategoryList && subCategoryList.length > 0
+      ? subCategoryList.map((subCategory) => ({
+          id: subCategory?.id || "",
+          label: subCategory?.title || "",
+        }))
+      : [];
+
   useEffect(() => {
     try {
       dispatch(fetchAllCategories());
       dispatch(fetchAllBrands());
       dispatch(fetchAllProducts());
+      if (selectedCategoryId) {
+        dispatch(fetchSubCategoriesOfCategory(selectedCategoryId));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          subCategory: [],
+        }));
+      }
     } catch (error) {
       console.error("Failed to fetch categories or brands:", error);
     }
-  }, [dispatch]);
+  }, [dispatch, selectedCategoryId, setFormData]);
 
   const handleSelectionChange = (field, selected) => {
     const value = Array.from(selected)[0];
@@ -61,9 +84,13 @@ export default function CategoryDetails({ formData, setFormData }) {
       [field]: values,
     }));
   };
-  console.log(categoryList, brandList, productList);
-
-  console.log(categoryOptions, brandOptions, productOptions);
+  console.log(categoryList, brandList, productList, subCategoryList);
+  console.log(
+    categoryOptions,
+    brandOptions,
+    productOptions,
+    subCategoryOptions
+  );
   console.log(formData);
 
   return (
@@ -77,9 +104,10 @@ export default function CategoryDetails({ formData, setFormData }) {
           variant="bordered"
           isRequired
           selectedKeys={formData.category ? [formData.category] : []}
-          onSelectionChange={(selected) =>
-            handleSelectionChange("category", selected)
-          }>
+          onSelectionChange={(selected) => {
+            setSelectedCategoryId(Array.from(selected)[0]);
+            handleSelectionChange("category", selected);
+          }}>
           {categoryOptions.map((category) => (
             <SelectItem key={category.id}>{category.label}</SelectItem>
           ))}
@@ -113,24 +141,10 @@ export default function CategoryDetails({ formData, setFormData }) {
           onSelectionChange={(selected) =>
             handleMultiSelectionChange("subCategory", selected)
           }>
-          {categoryOptions.map((category) => (
+          {subCategoryOptions.map((category) => (
             <SelectItem key={category.id}>{category.label}</SelectItem>
           ))}
         </Select>
-        <div className="flex items-center justify-start gap-3 text-sm">
-          Selected:{" "}
-          {formData.subCategory.length > 0
-            ? formData.subCategory
-                .map((key) => {
-                  const category = categoryOptions.find(
-                    (cat) => cat.id === key
-                  );
-                  return category?.label;
-                })
-                .filter(Boolean)
-                .join(", ")
-            : "None"}
-        </div>
       </div>
       <div className="flex flex-col gap-3">
         <Select

@@ -83,7 +83,6 @@ export default function ImagesUpload({
   }, [currentImages]);
   return (
     <div className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold">Product Thumbnail</h2>
       <ImageUpload
         imageFile={thumbnail}
         setImageFile={setThumbnail}

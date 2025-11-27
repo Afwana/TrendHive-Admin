@@ -4,6 +4,7 @@ import axios from "axios";
 const initialState = {
   isLoading: false,
   categoryList: [],
+  subCategoryList: [],
 };
 
 const baseUrl = "https://trendhive-server.onrender.com";
@@ -61,6 +62,17 @@ export const deleteCategory = createAsyncThunk(
   }
 );
 
+export const fetchSubCategoriesOfCategory = createAsyncThunk(
+  "/category/subCategoriesOfCategory",
+  async (categoryId) => {
+    const result = await axios.get(
+      `${baseUrl}/api/admin/category/${categoryId}/subCategories`
+    );
+
+    return result?.data;
+  }
+);
+
 const AdminCategorySilce = createSlice({
   name: "adminCategory",
   initialState,
@@ -77,6 +89,17 @@ const AdminCategorySilce = createSlice({
       .addCase(fetchAllCategories.rejected, (state) => {
         state.isLoading = false;
         state.categoryList = [];
+      })
+      .addCase(fetchSubCategoriesOfCategory.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchSubCategoriesOfCategory.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.subCategoryList = action.payload.data || [];
+      })
+      .addCase(fetchSubCategoriesOfCategory.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
       });
   },
 });

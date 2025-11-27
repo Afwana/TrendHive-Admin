@@ -13,12 +13,12 @@ import AnimatedStepper from "./AnimatedStepper";
 import BasicInfo from "./BasicInfo";
 import CategoryDetails from "./CategoryDetails";
 import ImagesUpload from "./ImagesUpload";
-// import { useDispatch } from "react-redux";
-// import {
-//   addNewProduct,
-//   editProduct,
-//   fetchAllProducts,
-// } from "@/store/admin/products-slice";
+import { useDispatch } from "react-redux";
+import {
+  addNewProduct,
+  editProduct,
+  fetchAllProducts,
+} from "@/store/admin/products-slice";
 import { toast } from "sonner";
 
 const initialFormData = {
@@ -52,7 +52,7 @@ export default function AddNewProduct({
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoadingState, setImageLoadingState] = useState(false);
   const [additionalProductImages, setAdditionalProductImages] = useState([]);
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (editProductData) {
@@ -75,7 +75,7 @@ export default function AddNewProduct({
   };
 
   function onSubmit(event) {
-    event.preventDefault();
+    event?.preventDefault();
 
     if (!isFormValid()) {
       toast.error("Please fill all required fields");
@@ -95,26 +95,26 @@ export default function AddNewProduct({
 
     console.log(productData);
 
-    // currentEditedId !== null
-    //   ? dispatch(
-    //       editProduct({
-    //         id: currentEditedId,
-    //         formData: productData,
-    //       })
-    //     ).then((data) => {
-    //       if (data?.payload?.success) {
-    //         dispatch(fetchAllProducts());
-    //         handleClose();
-    //         toast.success("Product updated successfully");
-    //       }
-    //     })
-    //   : dispatch(addNewProduct(productData)).then((data) => {
-    //       if (data?.payload?.success) {
-    //         dispatch(fetchAllProducts());
-    //         handleClose();
-    //         toast.success("Product added successfully");
-    //       }
-    //     });
+    currentEditedId !== null
+      ? dispatch(
+          editProduct({
+            id: currentEditedId,
+            formData: productData,
+          })
+        ).then((data) => {
+          if (data?.payload?.success) {
+            dispatch(fetchAllProducts());
+            handleClose();
+            toast.success("Product updated successfully");
+          }
+        })
+      : dispatch(addNewProduct(productData)).then((data) => {
+          if (data?.payload?.success) {
+            dispatch(fetchAllProducts());
+            handleClose();
+            toast.success("Product added successfully");
+          }
+        });
   }
 
   const handleAdditionalImagesUpdate = (imageUrls) => {
@@ -251,7 +251,7 @@ export default function AddNewProduct({
                 <Button
                   color="primary"
                   isDisabled={!isFormValid() || !uploadedImageUrl}
-                  onPress={onSubmit}>
+                  onPress={() => onSubmit()}>
                   {currentEditedId !== null ? "Update Product" : "Add Product"}
                 </Button>
               ) : (
