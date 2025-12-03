@@ -56,7 +56,7 @@ export default function CategoryDetails({ formData, setFormData }) {
       } else {
         setFormData((prev) => ({
           ...prev,
-          subCategory: [],
+          subCategories: [],
         }));
       }
     } catch (error) {
@@ -136,16 +136,16 @@ export default function CategoryDetails({ formData, setFormData }) {
       </div>
       <div className="flex flex-col gap-2">
         <Select
-          id={"subCategory"}
+          id={"subCategories"}
           label="Sub Category"
           labelPlacement="outside"
           placeholder="Select a sub category"
           variant="bordered"
           selectionMode="multiple"
           isRequired
-          selectedKeys={getSelectedKeys(formData.subCategory)}
+          selectedKeys={getSelectedKeys(formData.subCategories)}
           onSelectionChange={(selected) =>
-            handleMultiSelectionChange("subCategory", selected)
+            handleMultiSelectionChange("subCategories", selected)
           }>
           {subCategoryOptions.map((category) => (
             <SelectItem key={category.id}>{category.label}</SelectItem>
@@ -154,24 +154,24 @@ export default function CategoryDetails({ formData, setFormData }) {
       </div>
       <div className="flex flex-col gap-3">
         <Select
-          id={"relatedProducts"}
+          id={"relativeProducts"}
           label="Related Products"
           labelPlacement="outside"
           placeholder="Select related products"
           variant="bordered"
           selectionMode="multiple"
           isRequired
-          selectedKeys={getSelectedKeys(formData.relatedProducts)}
+          selectedKeys={getSelectedKeys(formData.relativeProducts)}
           onSelectionChange={(selected) =>
-            handleMultiSelectionChange("relatedProducts", selected)
+            handleMultiSelectionChange("relativeProducts", selected)
           }>
           {productOptions.map((product) => (
             <SelectItem key={product.id}>{product.label}</SelectItem>
           ))}
         </Select>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {formData.relatedProducts && formData.relatedProducts.length > 0 ? (
-            formData.relatedProducts.map((key) => (
+          {formData.relativeProducts && formData.relativeProducts.length > 0 ? (
+            formData.relativeProducts.map((key) => (
               <div
                 key={key}
                 className="relative w-[150px] h-[150px] rounded-lg overflow-hidden border">

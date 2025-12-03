@@ -127,7 +127,7 @@ export default function AddNewProduct({
       "title",
       "description",
       "category",
-      "subCategory",
+      "subCategories",
       "brand",
       "size",
       "colours",
@@ -186,7 +186,7 @@ export default function AddNewProduct({
         return;
       }
     } else if (currentStep === 2) {
-      if (!formData.category || !formData.subCategory || !formData.brand) {
+      if (!formData.category || !formData.subCategories || !formData.brand) {
         toast.error("Please select category, sub category and brand");
         return;
       }
