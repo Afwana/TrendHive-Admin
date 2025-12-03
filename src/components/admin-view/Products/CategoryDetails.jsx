@@ -170,7 +170,7 @@ export default function CategoryDetails({ formData, setFormData }) {
           ))}
         </Select>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {formData.relatedProducts.length > 0 ? (
+          {formData.relatedProducts && formData.relatedProducts.length > 0 ? (
             formData.relatedProducts.map((key) => (
               <div
                 key={key}
