@@ -16,40 +16,35 @@ export default function CategoryDetails({ formData, setFormData }) {
   const { brandList } = useSelector((state) => state.adminBrand);
   const { productList } = useSelector((state) => state.adminProducts);
 
-  const [selectedCategoryId, setSelectedCategoryId] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState(
+    formData.category || ""
+  );
+  // const [isInitialized, setInitialized] = useState(false);
 
   const categoryOptions =
-    categoryList && categoryList.length > 0
-      ? categoryList.map((category) => ({
-          id: category?._id || "",
-          label: category?.title || "",
-        }))
-      : [];
+    categoryList.map((category) => ({
+      id: category?._id || category?.id || "",
+      label: category?.title || "",
+    })) || [];
 
   const brandOptions =
-    brandList && brandList.length > 0
-      ? brandList.map((brand) => ({
-          id: brand?._id || "",
-          label: brand?.title || "",
-        }))
-      : [];
+    brandList.map((brand) => ({
+      id: brand?._id || brand?.id || "",
+      label: brand?.title || "",
+    })) || [];
 
   const productOptions =
-    productList && productList.length > 0
-      ? productList.map((product) => ({
-          id: product?._id || "",
-          label: product?.title || "",
-          image: product.thumbnail || "",
-        }))
-      : [];
+    productList.map((product) => ({
+      id: product?._id || product?.id || "",
+      label: product?.title || "",
+      image: product.thumbnail || "",
+    })) || [];
 
   const subCategoryOptions =
-    subCategoryList && subCategoryList.length > 0
-      ? subCategoryList.map((subCategory) => ({
-          id: subCategory?.id || "",
-          label: subCategory?.title || "",
-        }))
-      : [];
+    subCategoryList.map((subCategory) => ({
+      id: subCategory?.id || subCategory?._id || "",
+      label: subCategory?.title || "",
+    })) || [];
 
   useEffect(() => {
     try {
@@ -70,11 +65,15 @@ export default function CategoryDetails({ formData, setFormData }) {
   }, [dispatch, selectedCategoryId, setFormData]);
 
   const handleSelectionChange = (field, selected) => {
-    const value = Array.from(selected)[0];
+    const value = Array.from(selected)[0] || "";
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
+
+    if (field === "category") {
+      setSelectedCategoryId(value);
+    }
   };
 
   const handleMultiSelectionChange = (field, selected) => {
@@ -84,6 +83,13 @@ export default function CategoryDetails({ formData, setFormData }) {
       [field]: values,
     }));
   };
+
+  const getSelectedKeys = (value) => {
+    if (!value) return new Set();
+    if (Array.isArray(value)) return new Set(value);
+    return new Set([value]);
+  };
+
   console.log(categoryList, brandList, productList, subCategoryList);
   console.log(
     categoryOptions,
@@ -103,7 +109,7 @@ export default function CategoryDetails({ formData, setFormData }) {
           placeholder="Select a category"
           variant="bordered"
           isRequired
-          selectedKeys={formData.category ? [formData.category] : []}
+          selectedKeys={getSelectedKeys(formData.category)}
           onSelectionChange={(selected) => {
             setSelectedCategoryId(Array.from(selected)[0]);
             handleSelectionChange("category", selected);
@@ -119,7 +125,7 @@ export default function CategoryDetails({ formData, setFormData }) {
           placeholder="Select a brand"
           variant="bordered"
           isRequired
-          selectedKeys={formData.brand ? [formData.brand] : []}
+          selectedKeys={getSelectedKeys(formData.brand)}
           onSelectionChange={(selected) =>
             handleSelectionChange("brand", selected)
           }>
@@ -137,7 +143,7 @@ export default function CategoryDetails({ formData, setFormData }) {
           variant="bordered"
           selectionMode="multiple"
           isRequired
-          selectedKeys={formData.subCategory}
+          selectedKeys={getSelectedKeys(formData.subCategory)}
           onSelectionChange={(selected) =>
             handleMultiSelectionChange("subCategory", selected)
           }>
@@ -155,7 +161,7 @@ export default function CategoryDetails({ formData, setFormData }) {
           variant="bordered"
           selectionMode="multiple"
           isRequired
-          selectedKeys={formData.relatedProducts}
+          selectedKeys={getSelectedKeys(formData.relatedProducts)}
           onSelectionChange={(selected) =>
             handleMultiSelectionChange("relatedProducts", selected)
           }>

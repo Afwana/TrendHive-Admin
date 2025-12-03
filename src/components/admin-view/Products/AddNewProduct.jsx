@@ -66,7 +66,8 @@ export default function AddNewProduct({
       setAdditionalProductImages([]);
       setImageFile(null);
     }
-  }, [editProductData]);
+    setCurrentStep(1);
+  }, [editProductData, isOpen]);
 
   const lowercaseFormData = {
     ...formData,
