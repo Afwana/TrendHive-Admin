@@ -8,15 +8,19 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { Card, CardContent, CardFooter } from "../ui/card";
+import { useNavigate } from "react-router-dom";
 
 function AdminProductTile({ product, handleEdit, handleDelete }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const navigate = useNavigate();
 
   console.log(product);
 
   return (
     <>
-      <Card className="w-full max-w-sm mx-auto pt-0">
+      <Card
+        className="w-full max-w-sm mx-auto pt-0 cursor-pointer"
+        onClick={() => navigate(`/admin/products/${product?._id}`)}>
         <div>
           <div className="relative">
             <img

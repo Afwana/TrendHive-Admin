@@ -4,6 +4,7 @@ import axios from "axios";
 const initialState = {
   isLoading: false,
   productList: [],
+  productDetails: {},
 };
 
 const baseUrl = "https://trendhive-server.onrender.com";
@@ -62,6 +63,17 @@ export const deleteProduct = createAsyncThunk(
   }
 );
 
+export const getProductsById = createAsyncThunk(
+  "/products/fetchProductDetails",
+  async (productId) => {
+    const result = await axios.get(
+      `${baseUrl}/api/admin/products/${productId}`
+    );
+
+    return result?.data;
+  }
+);
+
 const AdminProductsSlice = createSlice({
   name: "adminProducts",
   initialState,
@@ -78,6 +90,17 @@ const AdminProductsSlice = createSlice({
       .addCase(fetchAllProducts.rejected, (state) => {
         state.isLoading = false;
         state.productList = [];
+      })
+      .addCase(getProductsById.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getProductsById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.productDetails = action.payload.data || {};
+      })
+      .addCase(getProductsById.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
       });
   },
 });

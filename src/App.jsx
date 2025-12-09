@@ -19,6 +19,7 @@ import AdminReturn from "./pages/admin-view/return";
 import AdminReviews from "./pages/admin-view/reviews";
 import AdminBrands from "./pages/admin-view/brand";
 import AdminFeatures from "./pages/admin-view/features";
+import AdminProductsDetails from "./pages/admin-view/productsDetails";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -64,6 +65,7 @@ function App() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="account" element={<AdminAccount />} />
           <Route path="products" element={<AdminProducts />} />
+          <Route path="products/:id" element={<AdminProductsDetails />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="categories" element={<AdminCategory />} />
           <Route path="footer" element={<AdminFooter />} />
