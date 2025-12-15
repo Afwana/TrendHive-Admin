@@ -1,33 +1,60 @@
 import NavigationSwiper from "@/components/admin-view/Products/NavigationSwiper";
 import { fetchAllBrands } from "@/store/admin/brand-slice";
 import { fetchAllCategories } from "@/store/admin/category-slice";
-import { getProductsById } from "@/store/admin/products-slice";
-import { Button, Chip } from "@heroui/react";
-import { useEffect, useState } from "react";
+import {
+  fetchAllProducts,
+  getProductsById,
+} from "@/store/admin/products-slice";
+import { Button, Chip, useDisclosure } from "@heroui/react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { fetchSubCategoriesOfCategory } from "./../../store/admin/category-slice/index";
+import AdminProductTile from "@/components/admin-view/product-tile";
+import { Card, CardContent } from "@/components/ui/card";
+import { EditIcon } from "lucide-react";
+import AddNewProduct from "@/components/admin-view/Products/AddNewProduct";
 
 export default function AdminProductsDetails() {
   const dispatch = useDispatch();
   const { id } = useParams();
-  const { productDetails, isLoading } = useSelector(
+  const navigate = useNavigate();
+  const { productList, productDetails, isLoading } = useSelector(
     (state) => state.adminProducts
   );
-  const { categoryList } = useSelector((state) => state.adminCategory);
+  const { categoryList, subCategoryList } = useSelector(
+    (state) => state.adminCategory
+  );
   const { brandList } = useSelector((state) => state.adminBrand);
 
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [editProductData, setEditProductData] = useState(null);
+  const [currentEditedId, setCurrentEditedId] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
   const [productCategory, setProductCategory] = useState(null);
   const [productBrand, setProductBrand] = useState(null);
   const [sizeArray, setSizeArray] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [relatedProducts, setRelatedProducts] = useState([]);
 
-  console.log(productDetails);
+  const handleEdit = (product) => {
+    setEditProductData(product);
+    onOpen();
+    setCurrentEditedId(product?._id);
+  };
 
   useEffect(() => {
     dispatch(getProductsById(id));
     dispatch(fetchAllCategories());
     dispatch(fetchAllBrands());
+    dispatch(fetchAllProducts());
   }, [id, dispatch]);
+
+  useEffect(() => {
+    if (productDetails?.category) {
+      dispatch(fetchSubCategoriesOfCategory(productDetails?.category));
+    }
+  }, [productDetails?.category, dispatch]);
 
   useEffect(() => {
     if (productDetails?.thumbnail) {
@@ -54,16 +81,19 @@ export default function AdminProductsDetails() {
   }, [productDetails, brandList]);
 
   useEffect(() => {
-    if (productDetails?.sizes) {
-      // Check if sizes is already an array
-      if (Array.isArray(productDetails.sizes)) {
-        setSizeArray(productDetails.sizes);
-      } else if (typeof productDetails.sizes === "string") {
-        // Split by comma and trim whitespace
-        const sizes = productDetails.sizes
+    if (productDetails?.size) {
+      if (Array.isArray(productDetails.size)) {
+        const sizes = productDetails.size.map((size) =>
+          typeof size === "string"
+            ? size.toUpperCase()
+            : String(size).toUpperCase()
+        );
+        setSizeArray(sizes);
+      } else if (typeof productDetails.size === "string") {
+        const sizes = productDetails.size
           .split(",")
           .map((size) => size.trim())
-          .filter((size) => size !== ""); // Remove empty strings
+          .filter((size) => size !== "");
         setSizeArray(sizes);
       } else {
         setSizeArray([]);
@@ -72,6 +102,47 @@ export default function AdminProductsDetails() {
       setSizeArray([]);
     }
   }, [productDetails]);
+
+  const matchSubCategories = useCallback(() => {
+    if (productDetails?.subCategories && subCategoryList.length > 0) {
+      const filteredSubCategories = subCategoryList.filter((subCat) => {
+        const isMatch = productDetails.subCategories.some((subId) => {
+          const subIdStr = String(subId);
+          const subCatIdStr = String(subCat._id || subCat.id || "");
+          return subIdStr === subCatIdStr;
+        });
+        return isMatch;
+      });
+      setSubCategories(filteredSubCategories);
+    } else {
+      setSubCategories([]);
+    }
+  }, [productDetails, subCategoryList]);
+
+  useEffect(() => {
+    matchSubCategories();
+  }, [matchSubCategories]);
+
+  const similarProducts = useCallback(() => {
+    if (productDetails?.relativeProducts && productList.length > 0) {
+      const filterProducts = productList.filter((product) => {
+        const isMatch = productDetails.relativeProducts.some((prodId) => {
+          const prodIdStr = String(prodId);
+          const productIdStr = String(product._id || product._id || "");
+          return prodIdStr === productIdStr;
+        });
+        return isMatch;
+      });
+      console.log(filterProducts);
+      setRelatedProducts(filterProducts);
+    } else {
+      setRelatedProducts([]);
+    }
+  }, [productDetails, productList]);
+
+  useEffect(() => {
+    similarProducts();
+  }, [similarProducts]);
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -82,9 +153,17 @@ export default function AdminProductsDetails() {
           <h2 className="text-2xl font-bold text-primary">
             {productDetails?.title}
           </h2>
-          <Chip color="primary" size="lg" className="text-xl font-bold">
-            {productDetails?.totalStock}
-          </Chip>
+          <div className="flex items-center justify-end gap-3">
+            <Chip color="primary" size="lg" className="text-xl font-bold">
+              {productDetails?.totalStock}
+            </Chip>
+            <Button
+              className="flex text-lg py-2"
+              color="secondary"
+              onPress={() => handleEdit(productDetails)}>
+              Edit <EditIcon size={18} />
+            </Button>
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {/* images swipe */}
@@ -145,17 +224,108 @@ export default function AdminProductsDetails() {
                 <p className="text-lg font-semibold">{productBrand?.title}</p>
               </div>
             </div>
-            {/* product sizes */}
-            <div className="flex items-center justify-start gap-5">
-              {productDetails?.sizes?.map((size, imdex) => (
-                <Chip key={imdex} color="primary" size="md">
-                  {size}
-                </Chip>
+            <div className="flex items-center justify-between gap-5">
+              {/* product sizes */}
+              <div className="flex items-center justify-start gap-3">
+                {sizeArray.length > 0 ? (
+                  sizeArray?.map((size, imdex) => (
+                    <Chip
+                      key={imdex}
+                      color="primary"
+                      className="text-lg w-10 p-2 uppercase">
+                      {size}
+                    </Chip>
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-sm font-medium">
+                    No sizes available!!
+                  </p>
+                )}
+              </div>
+              {/* Quality */}
+              <div className="flex items-center justify-center p-3 rounded-full bg-success text-xl border border-amber-300 font-bold w-14 h-14">
+                {productDetails?.quality}
+              </div>
+            </div>
+            {/* sub categories */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
+              {subCategories?.map((subCat, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col items-center justify-start gap-2">
+                  <div className="w-20 h-20 rounded-lg border-1 border-green-300 overflow-hidden">
+                    <img
+                      src={subCat?.image || "/placeholder.jpg"}
+                      alt={subCat?.title || "Category"}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <p className="text-lg font-semibold">{subCat?.title}</p>
+                </div>
               ))}
             </div>
           </div>
         </div>
       </div>
+      {relatedProducts && relatedProducts.length > 0 ? (
+        <div className="flex justify-start flex-col gap-5 mt-10">
+          <h1 className="flex justify-start text-lg md:text-xl lg:text-2xl font-semibold">
+            Related Products
+          </h1>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+            {relatedProducts.map((productItem, index) => (
+              <Card
+                key={index}
+                className="w-full max-w-sm mx-auto pt-0 cursor-pointer"
+                onClick={() => navigate(`/admin/products/${productItem?._id}`)}>
+                <div>
+                  <div className="relative">
+                    <img
+                      src={productItem?.thumbnail}
+                      alt={productItem?.title}
+                      className="w-full h-[300px] object-cover rounded-t-lg"
+                    />
+                  </div>
+                  <CardContent>
+                    <h2 className="text-xl font-bold mb-2 mt-2">
+                      {productItem?.title}
+                    </h2>
+                    <div className="flex justify-between items-center mb-2">
+                      <span
+                        className={`${
+                          productItem?.salePrice > 0 ? "line-through" : ""
+                        } text-lg font-semibold text-primary`}>
+                        &#8377; {productItem?.price}
+                      </span>
+                      {productItem?.salePrice > 0 ? (
+                        <span className="text-lg font-bold">
+                          &#8377; {productItem?.salePrice}
+                        </span>
+                      ) : null}
+                    </div>
+                  </CardContent>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      ) : null}
+      <div className="flex items-end bottom-0 justify-between mt-20">
+        <p className="text-sm md:text-base font-medium">
+          Updated At: {new Date(productDetails?.updatedAt).toLocaleString()}
+        </p>
+        <p className="text-sm md:text-base font-medium">
+          {new Date(productDetails?.createdAt).toLocaleString()}
+        </p>
+      </div>
+
+      <AddNewProduct
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        currentEditedId={currentEditedId}
+        editProductData={editProductData}
+        setCurrentEditedId={setCurrentEditedId}
+      />
     </>
   );
 }
