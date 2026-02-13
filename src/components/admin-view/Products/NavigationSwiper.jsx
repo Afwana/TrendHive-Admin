@@ -68,7 +68,8 @@ export default function NavigationSwiper({
         <Button
           className="border border-slate-200 bg-white"
           onPress={handlePrev}
-          isIconOnly>
+          isIconOnly
+        >
           <ArrowLeft size={20} />
         </Button>
       </div>
@@ -78,12 +79,14 @@ export default function NavigationSwiper({
         spaceBetween={5}
         slidesPerView={slidesPerView}
         onSwiper={(swiper) => (swiperRef.current = swiper)}
-        style={{ width: "100%" }}>
+        style={{ width: "100%" }}
+      >
         {images?.map((item, index) => (
           <SwiperSlide key={index}>
             <div
               className="cursor-pointer w-full md:h-[100px] lg:h-[150px]"
-              onClick={() => setSelectedImage(item)}>
+              onClick={() => setSelectedImage(item)}
+            >
               <img
                 src={item}
                 alt="product images"
@@ -101,7 +104,8 @@ export default function NavigationSwiper({
         <Button
           className="border border-slate-200 bg-white"
           onPress={handleNext}
-          isIconOnly>
+          isIconOnly
+        >
           <ArrowRight size={20} />
         </Button>
       </div>

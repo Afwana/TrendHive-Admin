@@ -20,10 +20,11 @@ import AdminReviews from "./pages/admin-view/reviews";
 import AdminBrands from "./pages/admin-view/brand";
 import AdminFeatures from "./pages/admin-view/features";
 import AdminProductsDetails from "./pages/admin-view/productsDetails";
+import { Button, Spinner } from "@heroui/react";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
-    (state) => state.auth
+    (state) => state.auth,
   );
   const dispatch = useDispatch();
 
@@ -31,7 +32,16 @@ function App() {
     dispatch(checkAuth());
   }, [dispatch]);
 
-  if (isLoading) return <Skeleton className="w-full h-screen bg-black" />;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen w-full mx-auto">
+        <Button disabled size="sm">
+          <Spinner data-icon="inline-start" />
+          Loading...
+        </Button>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col overflow-hidden bg-white">
       <Routes>
@@ -40,7 +50,8 @@ function App() {
           element={
             <CheckAuth
               isAuthenticated={isAuthenticated}
-              user={user}></CheckAuth>
+              user={user}
+            ></CheckAuth>
           }
         />
 
@@ -50,7 +61,8 @@ function App() {
             <CheckAuth isAuthenticated={isAuthenticated} user={user}>
               <AuthLayout />
             </CheckAuth>
-          }>
+          }
+        >
           <Route path="login" element={<AuthLogin />} />
           <Route path="register" element={<AuthRegister />} />
         </Route>
@@ -61,7 +73,8 @@ function App() {
             <CheckAuth isAuthenticated={isAuthenticated} user={user}>
               <AdminLayout />
             </CheckAuth>
-          }>
+          }
+        >
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="account" element={<AdminAccount />} />
           <Route path="products" element={<AdminProducts />} />

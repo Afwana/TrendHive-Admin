@@ -10,7 +10,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchSubCategoriesOfCategory } from "./../../store/admin/category-slice/index";
-import AdminProductTile from "@/components/admin-view/product-tile";
 import { Card, CardContent } from "@/components/ui/card";
 import { EditIcon } from "lucide-react";
 import AddNewProduct from "@/components/admin-view/Products/AddNewProduct";
@@ -20,10 +19,10 @@ export default function AdminProductsDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { productList, productDetails, isLoading } = useSelector(
-    (state) => state.adminProducts
+    (state) => state.adminProducts,
   );
   const { categoryList, subCategoryList } = useSelector(
-    (state) => state.adminCategory
+    (state) => state.adminCategory,
   );
   const { brandList } = useSelector((state) => state.adminBrand);
 
@@ -65,7 +64,7 @@ export default function AdminProductsDetails() {
   useEffect(() => {
     if (productDetails?.category && categoryList.length > 0) {
       const foundCategory = categoryList.find(
-        (cat) => cat._id === productDetails.category
+        (cat) => cat._id === productDetails.category,
       );
       setProductCategory(foundCategory);
     }
@@ -74,7 +73,7 @@ export default function AdminProductsDetails() {
   useEffect(() => {
     if (productDetails?.brand && brandList.length > 0) {
       const foundBrand = brandList.find(
-        (brand) => brand._id === productDetails.brand
+        (brand) => brand._id === productDetails.brand,
       );
       setProductBrand(foundBrand);
     }
@@ -86,7 +85,7 @@ export default function AdminProductsDetails() {
         const sizes = productDetails.size.map((size) =>
           typeof size === "string"
             ? size.toUpperCase()
-            : String(size).toUpperCase()
+            : String(size).toUpperCase(),
         );
         setSizeArray(sizes);
       } else if (typeof productDetails.size === "string") {
@@ -160,7 +159,8 @@ export default function AdminProductsDetails() {
             <Button
               className="flex text-lg py-2"
               color="secondary"
-              onPress={() => handleEdit(productDetails)}>
+              onPress={() => handleEdit(productDetails)}
+            >
               Edit <EditIcon size={18} />
             </Button>
           </div>
@@ -232,7 +232,8 @@ export default function AdminProductsDetails() {
                     <Chip
                       key={imdex}
                       color="primary"
-                      className="text-lg w-10 p-2 uppercase">
+                      className="text-lg w-10 p-2 uppercase"
+                    >
                       {size}
                     </Chip>
                   ))
@@ -252,7 +253,8 @@ export default function AdminProductsDetails() {
               {subCategories?.map((subCat, index) => (
                 <div
                   key={index}
-                  className="flex flex-col items-center justify-start gap-2">
+                  className="flex flex-col items-center justify-start gap-2"
+                >
                   <div className="w-20 h-20 rounded-lg border-1 border-green-300 overflow-hidden">
                     <img
                       src={subCat?.image || "/placeholder.jpg"}
@@ -277,7 +279,8 @@ export default function AdminProductsDetails() {
               <Card
                 key={index}
                 className="w-full max-w-sm mx-auto pt-0 cursor-pointer"
-                onClick={() => navigate(`/admin/products/${productItem?._id}`)}>
+                onClick={() => navigate(`/admin/products/${productItem?._id}`)}
+              >
                 <div>
                   <div className="relative">
                     <img
@@ -294,7 +297,8 @@ export default function AdminProductsDetails() {
                       <span
                         className={`${
                           productItem?.salePrice > 0 ? "line-through" : ""
-                        } text-lg font-semibold text-primary`}>
+                        } text-lg font-semibold text-primary`}
+                      >
                         &#8377; {productItem?.price}
                       </span>
                       {productItem?.salePrice > 0 ? (
