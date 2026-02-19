@@ -35,7 +35,7 @@ function App() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen w-full mx-auto">
-        <Button disabled size="sm">
+        <Button disabled size="sm" className="p-3">
           <Spinner data-icon="inline-start" />
           Loading...
         </Button>
