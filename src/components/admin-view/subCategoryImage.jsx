@@ -15,11 +15,9 @@ function SubCategoryImage({
   imageFile,
   setImageFile,
   imageLoadingState,
-  // uploadedImageUrl,
   setUploadedImageUrl,
   setImageLoadingState,
   isEditMode,
-  // isCustomStyling = false,
 }) {
   const inputRef = useRef(null);
   const baseUrl = "https://trendhive-server.onrender.com";
@@ -79,7 +77,7 @@ function SubCategoryImage({
     data.append("my_file", imageFile);
     const response = await axios.post(
       `${baseUrl}/api/admin/products/upload-image`,
-      data
+      data,
     );
 
     if (response?.data?.success) {
@@ -101,23 +99,23 @@ function SubCategoryImage({
         onDrop={handleDrop}
         className={`${
           isEditMode ? "opacity-60" : ""
-        } border-2 border-dashed rounded-lg`}>
+        } border-2 border-dashed rounded-lg`}
+      >
         <Input
           id={`sub-category-image-upload-${uploadId}`}
           type="file"
           className="hidden"
           ref={inputRef}
           onChange={handleImageFileChange}
-          // disabled={isEditMode}
         />
         {!imageFile ? (
           <Label
             htmlFor={`sub-category-image-upload-${uploadId}`}
             className={`${
               isEditMode ? "cursor-not-allowed" : ""
-            } flex flex-col items-center justify-center cursor-pointer py-2.5`}>
+            } flex flex-col items-center justify-center cursor-pointer py-2.5`}
+          >
             <UploadCloudIcon className="w-6 h-6 text-muted-foreground my-2 text-xs" />
-            {/* <span>Drag & drop or click to upload image</span> */}
           </Label>
         ) : imageLoadingState ? (
           <Skeleton className="h-5 bg-gray-100" />
@@ -132,7 +130,8 @@ function SubCategoryImage({
               variant="ghost"
               size="icon"
               className="text-muted-foreground hover:text-foreground cursor-pointer"
-              onClick={handleRemoveImage}>
+              onClick={handleRemoveImage}
+            >
               <XIcon className="w-2 h-2" />
               <span className="sr-only">Remove File</span>
             </Button>

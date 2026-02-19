@@ -14,13 +14,12 @@ function AdminProductTile({ product, handleEdit, handleDelete }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const navigate = useNavigate();
 
-  console.log(product);
-
   return (
     <>
       <Card
         className="w-full max-w-sm mx-auto pt-0 cursor-pointer"
-        onClick={() => navigate(`/admin/products/${product?._id}`)}>
+        onClick={() => navigate(`/admin/products/${product?._id}`)}
+      >
         <div>
           <div className="relative">
             <img
@@ -35,7 +34,8 @@ function AdminProductTile({ product, handleEdit, handleDelete }) {
               <span
                 className={`${
                   product?.salePrice > 0 ? "line-through" : ""
-                } text-lg font-semibold text-primary`}>
+                } text-lg font-semibold text-primary`}
+              >
                 &#8377; {product?.price}
               </span>
               {product?.salePrice > 0 ? (
@@ -74,7 +74,8 @@ function AdminProductTile({ product, handleEdit, handleDelete }) {
                   onPress={() => {
                     handleDelete(product?._id);
                     onOpenChange();
-                  }}>
+                  }}
+                >
                   Delete
                 </Button>
               </ModalFooter>

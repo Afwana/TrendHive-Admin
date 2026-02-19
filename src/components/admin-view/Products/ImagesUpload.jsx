@@ -35,11 +35,9 @@ export default function ImagesUpload({
       data.append("my_file", file);
       const response = await axios.post(
         `${baseUrl}/api/admin/products/upload-image`,
-        data
+        data,
       );
       const imageUrl = response?.data?.result?.url;
-
-      //   const updatedImages = [...additionalImages, imageUrl];
 
       if (imageUrl) {
         const updatedImages = [...additionalImages, imageUrl];
@@ -56,29 +54,13 @@ export default function ImagesUpload({
 
   const removeImage = (indexToRemove) => {
     const updatedImages = additionalImages.filter(
-      (_, index) => index !== indexToRemove
+      (_, index) => index !== indexToRemove,
     );
     setAdditionalImages(updatedImages);
     handleImages(updatedImages);
   };
 
-  //   const handleAdd = () => {
-  //     if (handleImages) {
-  //       handleImages(additionalImages);
-  //     }
-  //     //   onClose();
-  //   };
-
-  //   const handleCancel = () => {
-  //     setAdditionalImages([]);
-  //     if (handleImages) {
-  //       handleImages([]);
-  //     }
-  //     //   onClose();
-  //   };
-
   useEffect(() => {
-    // Populate the state with current images when dialog opens
     setAdditionalImages(currentImages);
   }, [currentImages]);
   return (
@@ -90,7 +72,6 @@ export default function ImagesUpload({
         setUploadedImageUrl={setThumbnailUrl}
         setImageLoadingState={setImageLoading}
         imageLoadingState={imageLoading}
-        // isEditMode={currentEditedId !== null}
       />
 
       <h2 className="text-lg font-semibold">Add More Product Images</h2>
@@ -129,23 +110,13 @@ export default function ImagesUpload({
               />
               <button
                 onClick={() => removeImage(index)}
-                className="absolute top-2 right-2 p-1 bg-white rounded-full text-red-500 border-red-500 z-10 border-2 group-hover:opacity-100 transition-opacity">
+                className="absolute top-2 right-2 p-1 bg-white rounded-full text-red-500 border-red-500 z-10 border-2 group-hover:opacity-100 transition-opacity"
+              >
                 <X className="w-4 h-4" />
               </button>
             </div>
           ))}
         </div>
-
-        {/* <div className="mt-5 flex items-center justify-end">
-          <div className="flex items-center gap-3">
-            <Button variant="flat" color="danger" onPress={handleCancel}>
-              Cancel
-            </Button>
-            <Button color="primary" onPress={handleAdd}>
-              Add more image
-            </Button>
-          </div>
-        </div> */}
       </div>
     </div>
   );

@@ -29,7 +29,6 @@ export const useDynamicProductFormElements = () => {
       dispatch(fetchAllBrands());
     } catch (error) {
       console.error("Failed to fetch categories or brands:", error);
-      // Optionally handle error (e.g., show toast, set error state)
     }
   }, [dispatch]);
   const addProductFormElements = [

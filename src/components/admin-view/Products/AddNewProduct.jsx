@@ -94,14 +94,12 @@ export default function AddNewProduct({
       images: additionalProductImages,
     };
 
-    console.log(productData);
-
     currentEditedId !== null
       ? dispatch(
           editProduct({
             id: currentEditedId,
             formData: productData,
-          })
+          }),
         ).then((data) => {
           if (data?.payload?.success) {
             dispatch(fetchAllProducts());
@@ -219,7 +217,8 @@ export default function AddNewProduct({
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       className="max-w-4xl"
-      scrollBehavior="inside">
+      scrollBehavior="inside"
+    >
       <ModalContent>
         {() => (
           <>
@@ -244,7 +243,8 @@ export default function AddNewProduct({
                 <Button
                   color="primary"
                   startContent={<ArrowLeft size={16} />}
-                  onPress={handlePrev}>
+                  onPress={handlePrev}
+                >
                   Back
                 </Button>
               )}
@@ -252,14 +252,16 @@ export default function AddNewProduct({
                 <Button
                   color="primary"
                   isDisabled={!isFormValid() || !uploadedImageUrl}
-                  onPress={() => onSubmit()}>
+                  onPress={() => onSubmit()}
+                >
                   {currentEditedId !== null ? "Update Product" : "Add Product"}
                 </Button>
               ) : (
                 <Button
                   color="primary"
                   endContent={<ArrowRight size={16} />}
-                  onPress={handleNext}>
+                  onPress={handleNext}
+                >
                   Next
                 </Button>
               )}

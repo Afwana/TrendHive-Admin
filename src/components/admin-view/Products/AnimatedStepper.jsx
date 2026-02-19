@@ -12,8 +12,9 @@ const ScrollShadow = ({ children, className = "", hideScrollBar = false }) => {
         hideScrollBar
           ? "scrollbar-hide"
           : "scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent",
-        className
-      )}>
+        className,
+      )}
+    >
       {children}
     </div>
   );
@@ -49,11 +50,13 @@ const AnimatedStepper = ({
       <div className="w-full max-w-full overflow-x-auto overflow-y-hidden">
         <div
           className="relative flex items-center justify-center min-w-max"
-          ref={scrollAreaRef}>
+          ref={scrollAreaRef}
+        >
           {steps.map((step, index) => (
             <div
               key={step.number}
-              className="relative flex flex-col items-center justify-center px-3 pt-3">
+              className="relative flex flex-col items-center justify-center px-3 pt-3"
+            >
               <div className="flex items-center justify-center">
                 <div className="flex flex-col items-center justify-center z-10 bg-white">
                   <motion.div
@@ -63,8 +66,8 @@ const AnimatedStepper = ({
                       step.number === currentStep
                         ? "border-4 border-[#00687A] bg-[#1800AD] text-white"
                         : step.number < currentStep
-                        ? "border-[0.5px] border-[#D0E1E1] bg-[#1800AD] text-white"
-                        : "border-[0.5px] border-[#D0E1E1] bg-white text-[#232528]"
+                          ? "border-[0.5px] border-[#D0E1E1] bg-[#1800AD] text-white"
+                          : "border-[0.5px] border-[#D0E1E1] bg-white text-[#232528]",
                     )}
                     initial={{ scale: 1 }}
                     whileHover={{ scale: 1.1 }}
@@ -72,7 +75,8 @@ const AnimatedStepper = ({
                     animate={{
                       scale: step.number === currentStep ? 1.1 : 1,
                       transition: { duration: 0.3 },
-                    }}>
+                    }}
+                  >
                     {step.number}
                   </motion.div>
                   <motion.div
@@ -81,14 +85,13 @@ const AnimatedStepper = ({
                     animate={{
                       opacity: step.number === currentStep ? 1 : 0.7,
                       transition: { duration: 0.3 },
-                    }}>
+                    }}
+                  >
                     {step.label}
                   </motion.div>
                 </div>
 
-                {/* Connector line */}
                 {index < steps.length - 1 && (
-                  //   <div className="flex items-center justify-center w-16 ml-5 mb-5">
                   <motion.div
                     className="flex items-center justify-center h-[2px] m-5 w-[32px] md:w-[150px]"
                     initial={{ backgroundColor: "#C3C6CB" }}
@@ -98,7 +101,6 @@ const AnimatedStepper = ({
                       transition: { duration: 0.3 },
                     }}
                   />
-                  //   </div>
                 )}
               </div>
             </div>

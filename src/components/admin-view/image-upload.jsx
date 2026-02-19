@@ -15,7 +15,6 @@ function ImageUpload({
   imageFile,
   setImageFile,
   imageLoadingState,
-  // uploadedImageUrl,
   setUploadedImageUrl,
   setImageLoadingState,
   isEditMode,
@@ -80,7 +79,7 @@ function ImageUpload({
     data.append("my_file", imageFile);
     const response = await axios.post(
       `${baseUrl}/api/admin/products/upload-image`,
-      data
+      data,
     );
 
     if (response?.data?.success) {
@@ -105,7 +104,8 @@ function ImageUpload({
         onDrop={handleDrop}
         className={`${
           isEditMode ? "opacity-60" : ""
-        } border-2 border-dashed rounded-lg`}>
+        } border-2 border-dashed rounded-lg`}
+      >
         <Input
           id="image-upload"
           type="file"
@@ -117,7 +117,8 @@ function ImageUpload({
         {!imageFile ? (
           <Label
             htmlFor="image-upload"
-            className={`flex flex-col items-center justify-center h-32 cursor-pointer`}>
+            className={`flex flex-col items-center justify-center h-32 cursor-pointer`}
+          >
             <UploadCloudIcon className="w-10 h-10 text-muted-foreground mb-2" />
             <span>Drag & drop or click to upload image</span>
           </Label>
@@ -133,7 +134,8 @@ function ImageUpload({
               variant="ghost"
               size="icon"
               className="text-muted-foreground hover:text-foreground"
-              onClick={handleRemoveImage}>
+              onClick={handleRemoveImage}
+            >
               <XIcon className="w-4 h-4" />
               <span className="sr-only">Remove File</span>
             </Button>

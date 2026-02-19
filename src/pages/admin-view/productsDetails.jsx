@@ -5,7 +5,7 @@ import {
   fetchAllProducts,
   getProductsById,
 } from "@/store/admin/products-slice";
-import { Button, Chip, useDisclosure } from "@heroui/react";
+import { Button, Chip, Spinner, useDisclosure } from "@heroui/react";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -132,7 +132,6 @@ export default function AdminProductsDetails() {
         });
         return isMatch;
       });
-      console.log(filterProducts);
       setRelatedProducts(filterProducts);
     } else {
       setRelatedProducts([]);
@@ -143,8 +142,15 @@ export default function AdminProductsDetails() {
     similarProducts();
   }, [similarProducts]);
 
-  if (isLoading) return <div>Loading...</div>;
-
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center h-screen w-full mx-auto">
+        <Button disabled size="sm">
+          <Spinner data-icon="inline-start" />
+          Loading...
+        </Button>
+      </div>
+    );
   return (
     <>
       <div className="flex flex-col gap-5">

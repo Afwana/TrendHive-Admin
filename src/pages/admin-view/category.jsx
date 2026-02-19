@@ -37,7 +37,6 @@ function AdminCategory() {
 
   const { categoryList } = useSelector((state) => state.adminCategory);
   const dispatch = useDispatch();
-  console.log(categoryList);
 
   const addSubCategory = () => {
     setFormData((prev) => {
@@ -65,7 +64,7 @@ function AdminCategory() {
     setFormData((prev) => ({
       ...prev,
       subCategories: prev.subCategories.map((subCat, i) =>
-        i === index ? { ...subCat, title } : subCat
+        i === index ? { ...subCat, title } : subCat,
       ),
     }));
   };
@@ -136,11 +135,11 @@ function AdminCategory() {
       (subCat, index) => ({
         ...subCat,
         image: subCategoryImages[index]?.url || subCat.image || null,
-      })
+      }),
     );
 
     const filteredSubCategories = subCategoriesWithImages.filter(
-      (subCat) => subCat.title.trim() !== "" || subCat.image !== null
+      (subCat) => subCat.title.trim() !== "" || subCat.image !== null,
     );
 
     const submitData = {
@@ -149,14 +148,12 @@ function AdminCategory() {
       subCategories: filteredSubCategories,
     };
 
-    console.log("Submitting data:", submitData);
-
     currentEditedId !== null
       ? dispatch(
           editCategory({
             id: currentEditedId,
             formData: submitData,
-          })
+          }),
         ).then((data) => {
           if (data?.payload?.success) {
             dispatch(fetchAllCategories());
@@ -193,7 +190,7 @@ function AdminCategory() {
     const requiredFields = ["title"];
 
     return requiredFields.every(
-      (field) => formData[field] && formData[field].trim() !== ""
+      (field) => formData[field] && formData[field].trim() !== "",
     );
   }
 
@@ -207,7 +204,8 @@ function AdminCategory() {
         <h2 className="text-2xl font-bold">Categories</h2>
         <Button
           onPress={() => setOpenCreateCategoriesDialog(true)}
-          color="primary">
+          color="primary"
+        >
           Add New Category
         </Button>
       </div>
@@ -221,7 +219,8 @@ function AdminCategory() {
                   <Button
                     isIconOnly
                     color="primary"
-                    onPress={() => handleEditCategory(categoryItem)}>
+                    onPress={() => handleEditCategory(categoryItem)}
+                  >
                     <EditIcon size={18} color="white" />
                   </Button>
                 </div>
@@ -267,7 +266,8 @@ function AdminCategory() {
             setUploadedImageUrl("");
             setSubCategoryImages({});
           }
-        }}>
+        }}
+      >
         <SheetContent side="right" className="overflow-auto">
           <SheetHeader>
             <SheetTitle>
@@ -306,7 +306,8 @@ function AdminCategory() {
                       onPress={addSubCategory}
                       isIconOnly
                       size="sm"
-                      color="primary">
+                      color="primary"
+                    >
                       <PlusSquare size={18} />
                     </Button>
                   </div>
@@ -314,7 +315,8 @@ function AdminCategory() {
                   {formData.subCategories.map((subCategory, index) => (
                     <div
                       key={subCategory.id}
-                      className="flex items-center gap-3 mb-4 p-3 border rounded-lg">
+                      className="flex items-center gap-3 mb-4 p-3 border rounded-lg"
+                    >
                       <SubCategoryImage
                         uploadId={index}
                         imageFile={subCategoryImages[index]?.file || null}
@@ -332,9 +334,6 @@ function AdminCategory() {
                           subCategoryImages[index]?.loading || false
                         }
                         isEditMode={currentEditedId !== null}
-                        // onImageUpload={(url) =>
-                        //   updateSubCategoryImage(index, url)
-                        // }
                       />
                       <Input
                         labelPlacement="outside"
@@ -353,7 +352,8 @@ function AdminCategory() {
                           isIconOnly
                           size="sm"
                           color="danger"
-                          onPress={() => removeSubCategory(index)}>
+                          onPress={() => removeSubCategory(index)}
+                        >
                           <Trash2 size={16} />
                         </Button>
                       )}
@@ -361,13 +361,13 @@ function AdminCategory() {
                   ))}
                 </div>
 
-                {/* Submit Button */}
                 <div className="mt-6">
                   <Button
                     type="submit"
                     color="primary"
                     isDisabled={!isFormValid()}
-                    className="w-full">
+                    className="w-full"
+                  >
                     {currentEditedId !== null
                       ? "Update Category"
                       : "Add Category"}

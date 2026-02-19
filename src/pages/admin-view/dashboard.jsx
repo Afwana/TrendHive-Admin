@@ -43,7 +43,7 @@ function AdminDashboard() {
         setUploadedImageUrl("");
       } else {
         toast.error(
-          data?.payload?.message || "Failed to upload, Limit 3 is reached."
+          data?.payload?.message || "Failed to upload, Limit 3 is reached.",
         );
       }
     });
@@ -78,11 +78,11 @@ function AdminDashboard() {
             setImageLoadingState={setImageLoadingState}
             imageLoadingState={imageLoadingState}
             isCustomStyling={true}
-            // isEditMode={currentEditedId !== null}
           />
           <Button
             onPress={handleUploadFeatureImage}
-            className="mt-5 w-full bg-primary">
+            className="mt-5 w-full bg-primary"
+          >
             Upload
           </Button>
           <CardBody className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
@@ -95,7 +95,8 @@ function AdminDashboard() {
                     />
                     <button
                       onClick={() => handleDeleteImage(featureImgItem._id)}
-                      className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                      className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
                       <Trash2 size={14} />
                     </button>
                   </div>
@@ -110,11 +111,13 @@ function AdminDashboard() {
               <Button
                 variant="faded"
                 className="bg-primary"
-                onPress={() => navigate("/admin/orders")}>
+                onPress={() => navigate("/admin/orders")}
+              >
                 View Orders
               </Button>
             </div>
-          }>
+          }
+        >
           <TableHeader>
             <TableColumn>Order ID</TableColumn>
             <TableColumn>Order Date</TableColumn>
@@ -133,19 +136,20 @@ function AdminDashboard() {
                           orderItem?.orderStatus === "Pending"
                             ? "bg-yellow-500"
                             : orderItem?.orderStatus === "Confirmed"
-                            ? "bg-orange-500"
-                            : orderItem?.orderStatus === "In Process"
-                            ? "bg-cyan-500"
-                            : orderItem?.orderStatus === "Shipped"
-                            ? "bg-blue-500"
-                            : orderItem?.orderStatus === "Delivered"
-                            ? "bg-green-500"
-                            : orderItem?.orderStatus === "Cancelled"
-                            ? "bg-red-500"
-                            : orderItem?.orderStatus === "Rejected"
-                            ? "bg-red-600"
-                            : "bg-black"
-                        }`}>
+                              ? "bg-orange-500"
+                              : orderItem?.orderStatus === "In Process"
+                                ? "bg-cyan-500"
+                                : orderItem?.orderStatus === "Shipped"
+                                  ? "bg-blue-500"
+                                  : orderItem?.orderStatus === "Delivered"
+                                    ? "bg-green-500"
+                                    : orderItem?.orderStatus === "Cancelled"
+                                      ? "bg-red-500"
+                                      : orderItem?.orderStatus === "Rejected"
+                                        ? "bg-red-600"
+                                        : "bg-black"
+                        }`}
+                      >
                         {orderItem?.orderStatus}
                       </Chip>
                     </TableCell>

@@ -11,15 +11,14 @@ import { fetchAllProducts } from "@/store/admin/products-slice";
 export default function CategoryDetails({ formData, setFormData }) {
   const dispatch = useDispatch();
   const { categoryList, subCategoryList } = useSelector(
-    (state) => state.adminCategory
+    (state) => state.adminCategory,
   );
   const { brandList } = useSelector((state) => state.adminBrand);
   const { productList } = useSelector((state) => state.adminProducts);
 
   const [selectedCategoryId, setSelectedCategoryId] = useState(
-    formData.category || ""
+    formData.category || "",
   );
-  // const [isInitialized, setInitialized] = useState(false);
 
   const categoryOptions =
     categoryList.map((category) => ({
@@ -90,15 +89,6 @@ export default function CategoryDetails({ formData, setFormData }) {
     return new Set([value]);
   };
 
-  console.log(categoryList, brandList, productList, subCategoryList);
-  console.log(
-    categoryOptions,
-    brandOptions,
-    productOptions,
-    subCategoryOptions
-  );
-  console.log(formData);
-
   return (
     <div className="flex flex-col gap-3">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -113,7 +103,8 @@ export default function CategoryDetails({ formData, setFormData }) {
           onSelectionChange={(selected) => {
             setSelectedCategoryId(Array.from(selected)[0]);
             handleSelectionChange("category", selected);
-          }}>
+          }}
+        >
           {categoryOptions.map((category) => (
             <SelectItem key={category.id}>{category.label}</SelectItem>
           ))}
@@ -128,7 +119,8 @@ export default function CategoryDetails({ formData, setFormData }) {
           selectedKeys={getSelectedKeys(formData.brand)}
           onSelectionChange={(selected) =>
             handleSelectionChange("brand", selected)
-          }>
+          }
+        >
           {brandOptions.map((brand) => (
             <SelectItem key={brand.id}>{brand.label}</SelectItem>
           ))}
@@ -146,7 +138,8 @@ export default function CategoryDetails({ formData, setFormData }) {
           selectedKeys={getSelectedKeys(formData.subCategories)}
           onSelectionChange={(selected) =>
             handleMultiSelectionChange("subCategories", selected)
-          }>
+          }
+        >
           {subCategoryOptions.map((category) => (
             <SelectItem key={category.id}>{category.label}</SelectItem>
           ))}
@@ -164,7 +157,8 @@ export default function CategoryDetails({ formData, setFormData }) {
           selectedKeys={getSelectedKeys(formData.relativeProducts)}
           onSelectionChange={(selected) =>
             handleMultiSelectionChange("relativeProducts", selected)
-          }>
+          }
+        >
           {productOptions.map((product) => (
             <SelectItem key={product.id}>{product.label}</SelectItem>
           ))}
@@ -174,7 +168,8 @@ export default function CategoryDetails({ formData, setFormData }) {
             formData.relativeProducts.map((key) => (
               <div
                 key={key}
-                className="relative w-[150px] h-[150px] rounded-lg overflow-hidden border">
+                className="relative w-[150px] h-[150px] rounded-lg overflow-hidden border"
+              >
                 <img
                   src={productOptions.find((item) => item.id === key)?.image}
                   alt={
